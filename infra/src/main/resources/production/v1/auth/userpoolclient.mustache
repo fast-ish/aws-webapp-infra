@@ -1,0 +1,59 @@
+name: {{hosted:id}}-webapp-userpoolclient
+idTokenValidity: PT1H
+accessTokenValidity: PT1H
+authSessionValidity: PT5M
+refreshTokenValidity: PT2H
+enableTokenRevocation: true
+generateSecret: false
+disableOAuth: false
+preventUserExistenceErrors: true
+enablePropagateAdditionalUserContextData: true
+oauth:
+  implicitCodeGrant: false
+  clientCredentials: false
+  authorizationCodeGrant: true
+  scopes:
+    - email
+    - profile
+    - openid
+  callbackUrls:
+    - https://{{hosted:domain}}/identified
+  logoutUrls:
+    - https://{{hosted:domain}}/logout
+readAttributes:
+  email: true
+  email_verified: true
+  phone_number: true
+  phone_number_verified: true
+  preferred_username: true
+  name: true
+  address: true
+  website: true
+  timezone: true
+  locale: true
+  updated_at: true
+writeAttributes:
+  email: true
+  phone_number: true
+  preferred_username: true
+  name: true
+  address: true
+  website: true
+  timezone: true
+  locale: true
+  updated_at: true
+customAttributes:
+  - mfa
+  - terms
+  - subscription
+authFlow:
+  adminUserPassword: true
+  userPassword: true
+  userSrp: true
+  custom: false
+tags:
+  "{{hosted:domain}}:resource-type": userpoolclient
+  "{{hosted:domain}}:category": identity
+  "{{hosted:domain}}:type": external
+  "{{hosted:domain}}:component": "{{hosted:id}}-userpoolclient"
+  "{{hosted:domain}}:part-of": "{{synthesizer:name}}:{{hosted:organization}}:{{hosted:name}}:{{hosted:alias}}:webapp"

@@ -1,0 +1,93 @@
+fn:
+  name: {{hosted:id}}-webapp-user-api
+  asset: "/root/.m2/repository/ui/webapp/fn/api.fn.user/1.0.0-SNAPSHOT/api.fn.user-1.0.0-SNAPSHOT.jar"
+  handler: ui.webapp.Handler
+  subnetType: private_with_egress
+  timeout: 60
+  memorySize: 256
+  runtime: java21
+  environment:
+    DYNAMODB_USER_TABLE: {{hosted:id}}-webapp-db-user
+    USER_POOL_NAME: "{{hosted:id}}-webapp-userpool"
+  role:
+    name: {{hosted:id}}-webapp-user-api-access
+    principal:
+      type: service
+      value: lambda.amazonaws.com
+    managedPolicyNames:
+      - service-role/AWSLambdaBasicExecutionRole
+      - service-role/AWSLambdaVPCAccessExecutionRole
+    customPolicies:
+      - name: {{hosted:id}}-webapp-db-user-writer
+        policy: policy/db/dynamodb-access.mustache
+        mappings:
+          resources:
+            - arn:aws:dynamodb:{{hosted:region}}:{{hosted:account}}:table/{{hosted:id}}-webapp-db-user
+      - name: "{{host:id}}-{{hosted:id}}-unsubscribe-access"
+        policy: "policy/api/unsubscribe-access.mustache"
+        mappings:
+          cognito:
+            - "arn:aws:cognito-idp:{{hosted:region}}:{{hosted:account}}:userpool/{{hosted:region}}*"
+    tags:
+      "{{hosted:domain}}:resource-type": lambda
+      "{{hosted:domain}}:category": api
+      "{{hosted:domain}}:type": user
+      "{{hosted:domain}}:component": "{{hosted:id}}-webapp-user-api-fn"
+      "{{hosted:domain}}:part-of": "{{synthesizer:name}}:{{hosted:organization}}:{{hosted:name}}:{{hosted:alias}}:webapp"
+integration:
+  - path: /user/{user}
+    method: post
+    proxy: true
+    allowTestInvoke: true
+    connectionType: internet
+    passthroughBehavior: never
+    options:
+      operationName: user-create
+      authorizationType: cognito
+      apiKeyRequired: false
+      requestParameters:
+        "method.request.path.user": true
+      authorizationScopes: [ ]
+      methodResponses: [ ]
+  - path: /user/{user}
+    method: get
+    proxy: true
+    allowTestInvoke: true
+    connectionType: internet
+    passthroughBehavior: never
+    options:
+      operationName: user-read
+      authorizationType: cognito
+      apiKeyRequired: false
+      requestParameters:
+        "method.request.path.user": true
+      authorizationScopes: [ ]
+      methodResponses: [ ]
+  - path: /user/{user}
+    method: put
+    proxy: true
+    allowTestInvoke: true
+    connectionType: internet
+    passthroughBehavior: never
+    options:
+      operationName: user-update
+      authorizationType: cognito
+      apiKeyRequired: false
+      requestParameters:
+        "method.request.path.user": true
+      authorizationScopes: [ ]
+      methodResponses: [ ]
+  - path: /user/{user}/unsubscribe
+    method: delete
+    proxy: true
+    allowTestInvoke: true
+    connectionType: internet
+    passthroughBehavior: never
+    options:
+      operationName: user-unsubscribe
+      authorizationType: cognito
+      apiKeyRequired: false
+      requestParameters:
+        "method.request.path.user": true
+      authorizationScopes: [ ]
+      methodResponses: [ ]

@@ -1,0 +1,88 @@
+name: {{hosted:id}}-webapp-userpool
+triggers: auth/triggers.mustache
+selfSignup: true
+featurePlan: plus
+standardThreatProtectionMode: full_function
+accountRecovery: email_and_phone_without_mfa
+deletionProtection: false
+removalPolicy: destroy
+sns: auth/sns.mustache
+ses: auth/ses.mustache
+groups:
+  - name: free
+    description: "free tier users"
+    precedence: 3
+  - name: startup
+    description: "startup tier users"
+    precedence: 2
+  - name: enterprise
+    description: "enterprise tier users"
+    precedence: 1
+autoVerify:
+  email: true
+  phone: false
+aliases:
+  email: true
+  phone: false
+  username: false
+  preferredUsername: false
+keepOriginalAttributes:
+  email: true
+  phone: false
+deviceTracking:
+  newDeviceChallenge: true
+  rememberOnUserPrompt: true
+mfa:
+  type: optional
+  message: "Please provide your mfa code '{####}'."
+  otp: true
+  sms: true
+passwordPolicy:
+  minLength: 12
+  requireLowercase: true
+  requireUppercase: true
+  requireDigits: true
+  requireSymbols: true
+  tempPasswordValidity: 1
+verification:
+  emailStyle: code
+  emailSubject: "{{hosted:name}} verification"
+  emailBody: "Please use verification code '{####}' to validate your email."
+  smsMessage: "Please use verification code '{####}' to validate your phone number."
+standardAttributes:
+  email:
+    mutable: false
+    required: true
+  preferredUsername:
+    mutable: true
+    required: true
+  phoneNumber:
+    mutable: true
+    required: false
+  website:
+    mutable: true
+    required: false
+  lastUpdateTime:
+    mutable: true
+    required: false
+  timezone:
+    mutable: true
+    required: false
+customAttributes:
+  - name: mfa
+    type: string
+    mutable: true
+  - name: subscription
+    type: string
+    mutable: true
+  - name: terms
+    type: string
+    min: 4
+    max: 5
+    mutable: true
+tags:
+  "{{hosted:domain}}:resource-type": userpool
+  "{{hosted:domain}}:category": identity
+  "{{hosted:domain}}:type": external
+  "{{hosted:domain}}:component": "{{hosted:id}}-userpool"
+  "{{hosted:domain}}:part-of": "{{synthesizer:name}}:{{hosted:organization}}:{{hosted:name}}:{{hosted:alias}}:webapp"

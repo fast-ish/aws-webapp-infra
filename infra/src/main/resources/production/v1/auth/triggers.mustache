@@ -1,0 +1,64 @@
+base:
+  name: base-auth
+  asset: "/root/.m2/repository/ui/webapp/fn/auth.fn.shared/1.0.0-SNAPSHOT/auth.fn.shared-1.0.0-SNAPSHOT.zip"
+  removalPolicy: destroy
+  runtimes: [ "java21" ]
+
+customMessage:
+  name: {{hosted:id}}-webapp-message-trigger
+  asset: "/root/.m2/repository/ui/webapp/fn/auth.fn.message/1.0.0-SNAPSHOT/auth.fn.message-1.0.0-SNAPSHOT.jar"
+  handler: ui.webapp.Handler
+  subnetType: private_with_egress
+  timeout: 60
+  memorySize: 256
+  runtime: java21
+  role:
+    name: {{hosted:id}}-webapp-message-trigger-access
+    principal:
+      type: service
+      value: lambda.amazonaws.com
+    managedPolicyNames:
+      - service-role/AWSLambdaBasicExecutionRole
+      - service-role/AWSLambdaVPCAccessExecutionRole
+    tags:
+      "{{hosted:domain}}:resource-type": role
+      "{{hosted:domain}}:category": auth
+      "{{hosted:domain}}:type": user
+      "{{hosted:domain}}:component": "{{hosted:id}}-webapp-custom-message-trigger"
+      "{{hosted:domain}}:part-of": "{{synthesizer:name}}:{{hosted:organization}}:{{hosted:name}}:{{hosted:alias}}:webapp"
+
+postConfirmation:
+  name: {{hosted:id}}-webapp-post-confirmation-trigger
+  asset: "/root/.m2/repository/ui/webapp/fn/auth.fn.post-confirmation/1.0.0-SNAPSHOT/auth.fn.post-confirmation-1.0.0-SNAPSHOT.jar"
+  handler: "ui.webapp.Handler"
+  subnetType: private_with_egress
+  timeout: 60
+  memorySize: 256
+  runtime: java21
+  environment:
+    DYNAMODB_USER_TABLE: "{{hosted:id}}-webapp-db-user"
+  role:
+    name: {{hosted:id}}-webapp-post-confirmation-trigger-access
+    principal:
+      type: service
+      value: lambda.amazonaws.com
+    managedPolicyNames:
+      - service-role/AWSLambdaBasicExecutionRole
+      - service-role/AWSLambdaVPCAccessExecutionRole
+    customPolicies:
+      - name: allow-update-cognito-user-group-{{hosted:id}}
+        policy: policy/auth/userpool-access.mustache
+        mappings:
+          resources:
+            - "arn:aws:cognito-idp:{{hosted:region}}:{{hosted:account}}:userpool/{{hosted:region}}_*"
+      - name: "{{host:id}}-{{hosted:id}}-user-db-access"
+        policy: "policy/db/dynamodb-access.mustache"
+        mappings:
+          resources:
+            - "arn:aws:dynamodb:{{hosted:region}}:{{hosted:account}}:table/{{hosted:id}}-webapp-db-user"
+    tags:
+      "{{hosted:domain}}:resource-type": role
+      "{{hosted:domain}}:category": auth
+      "{{hosted:domain}}:type": user
+      "{{hosted:domain}}:component": "{{hosted:id}}-webapp-post-confirmation-trigger"
+      "{{hosted:domain}}:part-of": "{{synthesizer:name}}:{{hosted:organization}}:{{hosted:name}}:{{hosted:alias}}:webapp"

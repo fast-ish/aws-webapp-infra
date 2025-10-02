@@ -1,0 +1,19 @@
+enabled: true
+externalId: {{hosted:name}}
+role:
+  name: {{hosted:id}}-webapp-cognito-sns
+  principal:
+    type: service
+    value: cognito-idp.amazonaws.com
+    conditions:
+      StringEquals:
+        "sts:ExternalId": {{hosted:name}}
+  managedPolicyNames:
+    - AmazonSNSFullAccess
+  customPolicies: [ ]
+  tags:
+    "{{hosted:domain}}:resource-type": sns
+    "{{hosted:domain}}:category": public
+    "{{hosted:domain}}:type": sms
+    "{{hosted:domain}}:component": "{{hosted:id}}-webapp-cognito-sns"
+    "{{hosted:domain}}:part-of": "{{synthesizer:name}}:{{hosted:organization}}:{{hosted:name}}:{{hosted:alias}}:webapp"

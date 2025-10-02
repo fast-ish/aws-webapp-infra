@@ -1,0 +1,239 @@
+host:
+  common:
+    id: {{host:id}}
+    organization: {{host:organization}}
+    account: {{host:account}}
+    region: {{host:region}}
+    name: {{host:name}}
+    alias: {{host:alias}}
+    environment: {{host:environment}}
+    version: {{host:version}}
+    domain: {{host:domain}}
+    tags:
+      "{{host:domain}}:billing": {{host:organization}}
+      "{{host:domain}}:managed-by": {{host:organization}}
+      "{{host:domain}}:account": {{host:account}}
+      "{{host:domain}}:region": {{host:region}}
+      "{{host:domain}}:name": {{host:name}}
+      "{{host:domain}}:type": {{host:alias}}
+      "{{host:domain}}:environment": {{host:environment}}
+      "{{host:domain}}:version": {{host:version}}
+      "{{host:domain}}:part-of": "{{host:organization}}:{{host:account}}:{{host:name}}:{{host:alias}}"
+
+hosted:
+  common:
+    id: {{hosted:id}}
+    organization: {{hosted:organization}}
+    account: {{hosted:account}}
+    region: {{hosted:region}}
+    name: {{hosted:name}}
+    alias: {{hosted:alias}}
+    environment: {{hosted:environment}}
+    version: {{hosted:version}}
+    domain: {{hosted:domain}}
+    tags:
+      "{{hosted:domain}}:billing": {{hosted:organization}}
+      "{{hosted:domain}}:managed-by": {{hosted:organization}}
+      "{{hosted:domain}}:account": {{hosted:account}}
+      "{{hosted:domain}}:region": {{hosted:region}}
+      "{{hosted:domain}}:name": {{hosted:name}}
+      "{{hosted:domain}}:alias": {{hosted:alias}}
+      "{{hosted:domain}}:environment": {{hosted:environment}}
+      "{{hosted:domain}}:version": {{hosted:version}}
+      "{{hosted:domain}}:part-of": "{{synthesizer:name}}:{{hosted:organization}}:{{hosted:name}}:{{hosted:alias}}:webapp"
+
+  vpc:
+    name: {{hosted:id}}-webapp-vpc
+    cidr: 192.168.0.0/16
+    ipProtocol: ipv4_only
+    natGateways: 2
+    createInternetGateway: true
+    availabilityZones:
+      - {{hosted:region}}a
+      - {{hosted:region}}b
+      - {{hosted:region}}c
+    enableDnsSupport: true
+    enableDnsHostnames: true
+    defaultInstanceTenancy: default
+    securityGroups: [ ]
+    subnets:
+      - name: public
+        cidrMask: 24
+        reserved: false
+        subnetType: public
+        mapPublicIpOnLaunch: false
+        tags:
+          "{{hosted:domain}}:resource-type": subnet
+          "{{hosted:domain}}:category": network
+          "{{hosted:domain}}:type": public
+          "{{hosted:domain}}:cidrMask": 24
+          "{{hosted:domain}}:component": {{hosted:id}}-webapp-vpc-subnet
+          "{{hosted:domain}}:part-of": "{{synthesizer:name}}:{{hosted:organization}}:{{hosted:name}}:{{hosted:alias}}:webapp"
+      - name: private
+        cidrMask: 24
+        reserved: false
+        subnetType: private_with_egress
+        tags:
+          "{{hosted:domain}}:resource-type": subnet
+          "{{hosted:domain}}:category": network
+          "{{hosted:domain}}:type": private_with_egress
+          "{{hosted:domain}}:cidrMask": 24
+          "{{hosted:domain}}:component": {{hosted:id}}-webapp-vpc-subnet
+          "{{hosted:domain}}:part-of": "{{synthesizer:name}}:{{hosted:organization}}:{{hosted:name}}:{{hosted:alias}}:webapp"
+    tags:
+      "{{hosted:domain}}:resource-type": vpc
+      "{{hosted:domain}}:category": network
+      "{{hosted:domain}}:type": network
+      "{{hosted:domain}}:cidrMask": 24
+      "{{hosted:domain}}:component": {{hosted:id}}-webapp-vpc
+      "{{hosted:domain}}:part-of": "{{synthesizer:name}}:{{hosted:organization}}:{{hosted:name}}:{{hosted:alias}}:webapp"
+
+  ses:
+    identity:
+      hostedZone: {{hosted:ses:hosted:zone}}
+      email: {{hosted:ses:email}}
+      domain: {{hosted:domain}}
+      mxFailure: use_default_value
+      mailFromDomain: feedback.{{hosted:domain}}
+      feedbackForwarding: true
+      configurationSet:
+        name: {{hosted:id}}-webapp-configuration-set
+        customTrackingRedirectDomain: {{hosted:domain}}
+        reputationMetrics: true
+        sendingEnabled: true
+        tlsPolicyConfiguration: optional
+        suppressionReasons: bounces_and_complaints
+        dedicatedIpPool:
+          enabled: false
+          name: {{hosted:id}}-webapp-ip-pool
+          scalingMode: standard
+    receiving:
+      name: {{hosted:id}}-webapp-receipt-rules
+      dropSpam: false
+      bucket:
+        name: {{hosted:id}}-webapp-ses-received-emails
+        accessControl: bucket_owner_full_control
+        objectOwnership: bucket_owner_enforced
+        removalPolicy: destroy
+        autoDeleteObjects: true
+        bucketPolicies:
+          - name: {{hosted:id}}-webapp-ses-receipts
+            policy: policy/ses/put-emails.mustache
+            principals:
+              - type: service
+                value: ses.amazonaws.com
+            mappings:
+              receiptRule: arn:aws:ses:{{hosted:region}}:{{hosted:account}}:receipt-rule-set/{{hosted:id}}-webapp-receipt-rules:receipt-rule/*
+              resources:
+                - arn:aws:s3:::{{hosted:id}}-webapp-ses-received-emails/*
+                - arn:aws:s3:::{{hosted:id}}-webapp-ses-received-emails
+        lifecycleRules:
+          - id: {{hosted:id}}-webapp-ses-received-emails
+            expiration: 1
+            enabled: true
+        tags:
+          "{{hosted:domain}}:resource-type": s3
+          "{{hosted:domain}}:category": ses
+          "{{hosted:domain}}:type": received
+          "{{hosted:domain}}:component": {{hosted:id}}-webapp-ses
+          "{{hosted:domain}}:part-of": "{{synthesizer:name}}:{{hosted:organization}}:{{hosted:name}}:{{hosted:alias}}:webapp"
+      rules:
+        - name: email-receipt
+          enabled: true
+          scanEnabled: true
+          recipients:
+            - hi@{{hosted:domain}}
+          s3Actions:
+            - prefix: emails/
+              topic: {{hosted:id}}-webapp-received-emails
+    destination:
+      bounce:
+        enabled: true
+        topic: "{{hosted:id}}-webapp-bounce"
+        configurationSet: "{{hosted:id}}-webapp-configuration-set"
+      reject:
+        enabled: true
+        topic: "{{hosted:id}}-webapp-complaint"
+        configurationSet: "{{hosted:id}}-webapp-configuration-set"
+      complaint:
+        topic: "{{hosted:id}}-webapp-reject"
+        configurationSet: "{{hosted:id}}-webapp-configuration-set"
+        enabled: true
+
+  auth:
+    vpcName: {{hosted:id}}-webapp-vpc
+    userPool: auth/userpool.mustache
+    userPoolClient: auth/userpoolclient.mustache
+
+  db:
+    vpcName: {{hosted:id}}-webapp-vpc
+    user:
+      name: {{hosted:id}}-webapp-db-user
+      partitionKey:
+        name: id
+        type: string
+      tableClass: standard
+      removalPolicy: destroy
+      contributorInsights: true
+      deletionProtection: false
+      encryption:
+        enabled: true
+        owner: aws
+        kms: { }
+      billing:
+        onDemand: true
+      streams:
+        kinesis:
+          enabled: false
+          name: {{hosted:id}}-webapp-db-user-change
+          shards: 2
+          mode: on_demand
+          encryption: unencrypted
+          removalPolicy: destroy
+          retentionPeriod: 1
+        dynamoDb:
+          enabled: false
+          type: new_image
+    listener: { }
+
+  api:
+    authorizer:
+      name: {{hosted:id}}-webapp-api
+    apigw:
+      vpcName: {{hosted:id}}-webapp-vpc
+      name: {{hosted:id}}-webapp-api
+      description: "{{hosted:id}} api gateway for webapp resources"
+      cloudwatchEnabled: true
+      disableExecuteApi: false
+      authorizationType: cognito
+      validators: []
+      requestModels: []
+      baseLayer:
+        name: base-api
+        asset: "/root/.m2/repository/ui/webapp/fn/api.fn.shared/1.0.0-SNAPSHOT/api.fn.shared-1.0.0-SNAPSHOT.zip"
+        removalPolicy: destroy
+        runtimes: [ "java21" ]
+      methodResponses: [ ]
+      stageOptions:
+        stageName: v1
+        description: "{{hosted:id}} api"
+        loggingLevel: info
+        variables: { }
+        tracingEnabled: true
+        cachingEnabled: true
+        dataTraceEnabled: true
+        metricsEnabled: true
+        throttlingBurstLimit: 20.0
+        throttlingRateLimit: 50
+      logGroup:
+        name: {{hosted:id}}-webapp-apigw-logs
+        type: standard
+        retention: one_day
+        removalPolicy: destroy
+      tags:
+        "{{hosted:domain}}:resource-type": http-api-gateway
+        "{{hosted:domain}}:category": api
+        "{{hosted:domain}}:type": public
+        "{{hosted:domain}}:component": {{hosted:id}}-webapp-api
+        "{{hosted:domain}}:part-of": "{{synthesizer:name}}:{{hosted:organization}}:{{hosted:name}}:{{hosted:alias}}:webapp"
+    resource: api/user.mustache
