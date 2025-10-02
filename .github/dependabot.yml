@@ -1,0 +1,83 @@
+# To get started with Dependabot version updates, you'll need to specify which
+# package ecosystems to update and where the package manifests are located.
+# Please see the documentation for all configuration options:
+# https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+
+version: 2
+updates:
+  - package-ecosystem: "maven"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+
+  - package-ecosystem: "maven"
+    directory: "/fn"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+
+  - package-ecosystem: "maven"
+    directory: "/fn/api"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+
+  - package-ecosystem: "maven"
+    directory: "/fn/api/user"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+
+  - package-ecosystem: "maven"
+    directory: "/fn/auth"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+
+  - package-ecosystem: "maven"
+    directory: "/fn/auth/message"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+
+  - package-ecosystem: "maven"
+    directory: "/fn/auth/post-confirmation"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+
+  - package-ecosystem: "maven"
+    directory: "/fn/layer/api"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+
+  - package-ecosystem: "maven"
+    directory: "/fn/layer/auth"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+
+  - package-ecosystem: "maven"
+    directory: "/fn/layer/shared"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+
+  - package-ecosystem: "maven"
+    directory: "/infra"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"

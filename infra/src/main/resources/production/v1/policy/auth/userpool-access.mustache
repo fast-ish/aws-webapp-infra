@@ -1,0 +1,14 @@
+[
+  {
+    "Effect": "Allow",
+    "Action": [
+      "cognito-idp:AdminAddUserToGroup",
+      "cognito-idp:AdminListGroupsForUser"
+    ],
+    "Resource": [
+      {{#resources}}
+        "{{.}}",
+      {{/resources}}
+    ]
+  }
+]
