@@ -1,0 +1,17 @@
+{
+  "Effect": "Allow",
+  "Action": [
+    "s3:PutObject"
+  ],
+  "Resource": [
+    {{#resources}}
+      "{{.}}",
+    {{/resources}}
+  ],
+  "Condition": {
+    "StringEquals": {
+      "AWS:SourceAccount": "{{hosted:account}}",
+      "AWS:SourceArn": "{{receiptRule}}"
+    }
+  }
+}

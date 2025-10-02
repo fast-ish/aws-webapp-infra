@@ -1,0 +1,17 @@
+cloudFormationExecutionRole: {{synthesizer:role:exec}}
+deployRoleArn: {{synthesizer:role:deploy}}
+lookupRoleArn: {{synthesizer:role:lookup}}
+fileAssetPublishingRoleArn: {{synthesizer:role:assets}}
+imageAssetPublishingRoleArn: {{synthesizer:role:images}}
+bootstrapStackVersionSsmParameter: {{synthesizer:ssm}}
+fileAssetsBucketName: {{synthesizer:storage:assets}}
+imageAssetsRepositoryName: {{synthesizer:storage:images}}
+qualifier: {{synthesizer:qualifier}}
+bucketPrefix: {{synthesizer:assets:prefix}}
+dockerTagPrefix: {{synthesizer:images:tag}}
+deployRoleExternalId: {{synthesizer:externalid}}
+lookupRoleExternalId: {{synthesizer:externalid}}
+fileAssetPublishingExternalId: {{synthesizer:externalid}}
+imageAssetPublishingExternalId: {{synthesizer:externalid}}
+generateBootstrapVersionRule: true
+useLookupRoleForStackOperations: true
