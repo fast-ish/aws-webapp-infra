@@ -1,0 +1,91 @@
+# Configuration for GitHub labeler action
+# Automatically applies labels to PRs based on file changes
+
+documentation:
+  - changed-files:
+    - any-glob-to-any-file:
+      - '**/*.md'
+      - 'docs/**/*'
+      - 'README.md'
+
+dependencies:
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'pom.xml'
+      - '**/pom.xml'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'requirements.txt'
+      - 'go.mod'
+      - 'go.sum'
+
+github-actions:
+  - changed-files:
+    - any-glob-to-any-file:
+      - '.github/**/*'
+      - '.github/workflows/**/*'
+
+java:
+  - changed-files:
+    - any-glob-to-any-file:
+      - '**/*.java'
+      - 'src/main/java/**/*'
+      - 'src/test/java/**/*'
+
+resources:
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'src/main/resources/**/*'
+      - 'src/test/resources/**/*'
+
+test:
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'src/test/**/*'
+      - '**/*Test.java'
+      - '**/*Tests.java'
+      - '**/test/**/*'
+
+build:
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'pom.xml'
+      - 'Dockerfile'
+      - '.dockerignore'
+      - 'Makefile'
+      - 'build.gradle'
+      - 'settings.gradle'
+
+config:
+  - changed-files:
+    - any-glob-to-any-file:
+      - '**/*.yml'
+      - '**/*.yaml'
+      - '**/*.json'
+      - '**/*.properties'
+      - '**/*.xml'
+      - '.gitignore'
+      - '.editorconfig'
+
+cdk:
+  - changed-files:
+    - any-glob-to-any-file:
+      - '**/cdk/**/*'
+      - '**/*Stack.java'
+      - '**/*Construct.java'
+
+security:
+  - changed-files:
+    - any-glob-to-any-file:
+      - '**/security/**/*'
+      - '**/auth/**/*'
+      - '**/crypto/**/*'
+      - '.github/dependabot.yml'
+
+infrastructure:
+  - changed-files:
+    - any-glob-to-any-file:
+      - '**/infra/**/*'
+      - '**/infrastructure/**/*'
+      - '**/deploy/**/*'
+      - '**/deployment/**/*'

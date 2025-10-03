@@ -1,0 +1,20 @@
+[
+  {
+    "Effect": "Allow",
+    "Action": [
+      "cognito-idp:AdminDeleteUser"
+    ],
+    "Resource": [
+      {{#cognito}}
+        "{{.}}",
+      {{/cognito}}
+    ]
+  },
+  {
+    "Effect": "Allow",
+    "Action": [
+      "cognito-idp:ListUserPools"
+    ],
+    "Resource": [ "*" ]
+  }
+]
