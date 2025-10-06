@@ -20,7 +20,7 @@
         <maven.compiler.target>21</maven.compiler.target>
 
         <cdk.common.version>1.0.0-SNAPSHOT</cdk.common.version>
-        <jackson.version>2.19.2</jackson.version>
+        <jackson.version>2.20.0</jackson.version>
 
         <junit.version>5.11.4</junit.version>
 
