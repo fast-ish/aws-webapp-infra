@@ -39,7 +39,7 @@
         <maven.dependency.plugin.version>3.8.1</maven.dependency.plugin.version>
         <maven.license.plugin.version>2.4.0</maven.license.plugin.version>
         <versions.maven.plugin.version>2.18.0</versions.maven.plugin.version>
-        <dependency.check.maven.version>11.1.1</dependency.check.maven.version>
+        <dependency.check.maven.version>12.1.7</dependency.check.maven.version>
 
         <maven.jxr.plugin.version>3.6.0</maven.jxr.plugin.version>
 
