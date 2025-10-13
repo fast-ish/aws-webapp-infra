@@ -32,7 +32,7 @@
 
         <spotbugs.maven.plugin.version>4.9.6.0</spotbugs.maven.plugin.version>
         <maven.pmd.plugin.version>3.26.0</maven.pmd.plugin.version>
-        <jacoco.maven.plugin.version>0.8.13</jacoco.maven.plugin.version>
+        <jacoco.maven.plugin.version>0.8.14</jacoco.maven.plugin.version>
         <maven.checkstyle.plugin.version>3.6.0</maven.checkstyle.plugin.version>
         <spotless.maven.plugin.version>2.46.1</spotless.maven.plugin.version>
 
