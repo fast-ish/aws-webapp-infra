@@ -37,7 +37,7 @@
         <spotless.maven.plugin.version>2.47.1</spotless.maven.plugin.version>
 
         <maven.dependency.plugin.version>3.9.0</maven.dependency.plugin.version>
-        <maven.license.plugin.version>2.4.0</maven.license.plugin.version>
+        <maven.license.plugin.version>2.7.0</maven.license.plugin.version>
         <versions.maven.plugin.version>2.18.0</versions.maven.plugin.version>
         <dependency.check.maven.version>11.1.1</dependency.check.maven.version>
 
