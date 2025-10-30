@@ -1,7 +1,7 @@
 package fasti.sh.webapp.stack;
 
-import fasti.sh.model.main.Common;
 import fasti.sh.model.aws.vpc.NetworkConf;
+import fasti.sh.model.main.Common;
 import fasti.sh.webapp.stack.model.ApiConf;
 import fasti.sh.webapp.stack.model.AuthConf;
 import fasti.sh.webapp.stack.model.DbConf;

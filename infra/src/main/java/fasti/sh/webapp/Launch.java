@@ -29,28 +29,39 @@ public class Launch {
     var conf = get(app);
 
     new DeploymentStack(
-        app, conf.hosted(),
-        StackProps.builder()
-            .stackName(name(conf.hosted().common().id(), "webapp"))
-            .env(Environment.builder()
-                .account(conf.hosted().common().account())
-                .region(conf.hosted().common().region())
-                .build())
-            .description(describe(conf.host().common(),
-                String.format("%s %s webapp",
-                    conf.hosted().common().name(), conf.hosted().common().alias())))
-            .synthesizer(synthesizer(app))
-            .tags(Common.Maps.from(conf.host().common().tags(), conf.hosted().common().tags()))
-            .build());
+      app, conf.hosted(),
+      StackProps
+        .builder()
+        .stackName(name(conf.hosted().common().id(), "webapp"))
+        .env(
+          Environment
+            .builder()
+            .account(conf.hosted().common().account())
+            .region(conf.hosted().common().region())
+            .build())
+        .description(
+          describe(
+            conf.host().common(),
+            String
+              .format(
+                "%s %s webapp",
+                conf.hosted().common().name(),
+                conf.hosted().common().alias())))
+        .synthesizer(synthesizer(app))
+        .tags(Common.Maps.from(conf.host().common().tags(), conf.hosted().common().tags()))
+        .build());
 
     app.synth();
   }
 
   @SneakyThrows
   private static Hosted<Bare, DeploymentConf> get(App app) {
-    var parsed = Template.parse(
-        app, "conf.mustache",
-        Map.ofEntries(
+    var parsed = Template
+      .parse(
+        app,
+        "conf.mustache",
+        Map
+          .ofEntries(
             Map.entry("hosted:ses:hosted:zone", app.getNode().getContext("hosted:ses:hosted:zone")),
             Map.entry("hosted:ses:email", app.getNode().getContext("hosted:ses:email"))));
 
@@ -67,8 +78,12 @@ public class Launch {
       var synthesizerName = app.getNode().getContext("hosted:synthesizer:name");
       var synthesizerAlias = app.getNode().getContext("hosted:synthesizer:alias");
 
-      var parsed = Template.parse(app, "synthesizer.mustache",
-          Map.ofEntries(
+      var parsed = Template
+        .parse(
+          app,
+          "synthesizer.mustache",
+          Map
+            .ofEntries(
               Map.entry("synthesizer:role:exec", app.getNode().getContext("hosted:cdk:role:exec").toString()),
               Map.entry("synthesizer:role:deploy", app.getNode().getContext("hosted:cdk:role:deploy").toString()),
               Map.entry("synthesizer:role:lookup", app.getNode().getContext("hosted:cdk:role:lookup").toString()),
@@ -83,25 +98,26 @@ public class Launch {
               Map.entry("synthesizer:externalid", key)));
 
       var synthesizer = Mapper.get().readValue(parsed, Synthesizer.class);
-      return DefaultStackSynthesizer.Builder.create()
-          .qualifier(synthesizer.qualifier())
-          .cloudFormationExecutionRole(synthesizer.cloudFormationExecutionRole())
-          .deployRoleArn(synthesizer.deployRoleArn())
-          .lookupRoleArn(synthesizer.lookupRoleArn())
-          .fileAssetPublishingRoleArn(synthesizer.fileAssetPublishingRoleArn())
-          .imageAssetPublishingRoleArn(synthesizer.imageAssetPublishingRoleArn())
-          .bootstrapStackVersionSsmParameter(synthesizer.bootstrapStackVersionSsmParameter())
-          .fileAssetsBucketName(arnToBucketName(synthesizer.fileAssetsBucketName()))
-          .imageAssetsRepositoryName(synthesizer.imageAssetsRepositoryName())
-          .generateBootstrapVersionRule(synthesizer.generateBootstrapVersionRule())
-          .useLookupRoleForStackOperations(synthesizer.useLookupRoleForStackOperations())
-          .bucketPrefix(synthesizer.bucketPrefix())
-          .dockerTagPrefix(synthesizer.dockerTagPrefix())
-          .lookupRoleExternalId(synthesizer.lookupRoleExternalId())
-          .fileAssetPublishingExternalId(synthesizer.fileAssetPublishingExternalId())
-          .imageAssetPublishingExternalId(synthesizer.imageAssetPublishingExternalId())
-          .deployRoleExternalId(synthesizer.deployRoleExternalId())
-          .build();
+      return DefaultStackSynthesizer.Builder
+        .create()
+        .qualifier(synthesizer.qualifier())
+        .cloudFormationExecutionRole(synthesizer.cloudFormationExecutionRole())
+        .deployRoleArn(synthesizer.deployRoleArn())
+        .lookupRoleArn(synthesizer.lookupRoleArn())
+        .fileAssetPublishingRoleArn(synthesizer.fileAssetPublishingRoleArn())
+        .imageAssetPublishingRoleArn(synthesizer.imageAssetPublishingRoleArn())
+        .bootstrapStackVersionSsmParameter(synthesizer.bootstrapStackVersionSsmParameter())
+        .fileAssetsBucketName(arnToBucketName(synthesizer.fileAssetsBucketName()))
+        .imageAssetsRepositoryName(synthesizer.imageAssetsRepositoryName())
+        .generateBootstrapVersionRule(synthesizer.generateBootstrapVersionRule())
+        .useLookupRoleForStackOperations(synthesizer.useLookupRoleForStackOperations())
+        .bucketPrefix(synthesizer.bucketPrefix())
+        .dockerTagPrefix(synthesizer.dockerTagPrefix())
+        .lookupRoleExternalId(synthesizer.lookupRoleExternalId())
+        .fileAssetPublishingExternalId(synthesizer.fileAssetPublishingExternalId())
+        .imageAssetPublishingExternalId(synthesizer.imageAssetPublishingExternalId())
+        .deployRoleExternalId(synthesizer.deployRoleExternalId())
+        .build();
     } else {
       return DefaultStackSynthesizer.Builder.create().build();
     }

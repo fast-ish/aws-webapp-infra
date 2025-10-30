@@ -1,0 +1,3 @@
+vpcName: test-vpc
+userPool: config/auth/userpool.yaml
+userPoolClient: config/auth/userpoolclient.yaml

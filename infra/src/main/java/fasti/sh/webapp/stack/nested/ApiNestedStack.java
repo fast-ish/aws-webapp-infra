@@ -42,39 +42,46 @@ public class ApiNestedStack extends NestedStack {
     var userPool = UserPool.fromUserPoolArn(this, "userpool.lookup", userPoolArn);
 
     var authorizer = CognitoUserPoolsAuthorizer.Builder
-        .create(this, "cognito.authorizer")
-        .authorizerName(conf.authorizer().name())
-        .cognitoUserPools(List.of(userPool))
-        .build();
+      .create(this, "cognito.authorizer")
+      .authorizerName(conf.authorizer().name())
+      .cognitoUserPools(List.of(userPool))
+      .build();
 
     var stack = new RestApiConstruct(this, common, conf.apigw(), authorizer, s -> JsonSchema.builder().build());
 
     this.baseLayer = LayerVersion.Builder
-        .create(this, id("layer", conf.apigw().baseLayer().name()))
-        .layerVersionName(conf.apigw().baseLayer().name())
-        .code(Code.fromAsset(conf.apigw().baseLayer().asset()))
-        .removalPolicy(conf.apigw().baseLayer().removalPolicy())
-        .compatibleArchitectures(List.of(Architecture.X86_64))
-        .compatibleRuntimes(conf.apigw().baseLayer().runtimes().stream()
-            .map(r -> Runtime.Builder.create(r).build()).toList())
-        .build();
+      .create(this, id("layer", conf.apigw().baseLayer().name()))
+      .layerVersionName(conf.apigw().baseLayer().name())
+      .code(Code.fromAsset(conf.apigw().baseLayer().asset()))
+      .removalPolicy(conf.apigw().baseLayer().removalPolicy())
+      .compatibleArchitectures(List.of(Architecture.X86_64))
+      .compatibleRuntimes(
+        conf
+          .apigw()
+          .baseLayer()
+          .runtimes()
+          .stream()
+          .map(r -> Runtime.Builder.create(r).build())
+          .toList())
+      .build();
 
     this.api = stack.api();
     this.logGroup = stack.logGroup();
     this.integrations = integrate(common, conf, vpc, authorizer, stack, baseLayer);
 
     CfnOutput.Builder
-        .create(this, id(common.id(), "apigw.id"))
-        .exportName(exported(scope, "webappapigwid"))
-        .value(this.api().getRestApiId())
-        .description(describe(common, "api gateway id"))
-        .build();
+      .create(this, id(common.id(), "apigw.id"))
+      .exportName(exported(scope, "webappapigwid"))
+      .value(this.api().getRestApiId())
+      .description(describe(common, "api gateway id"))
+      .build();
   }
 
   private List<IResource> integrate(Common common, ApiConf conf, Vpc vpc, Authorizer authorizer, RestApiConstruct stack,
-                                    LayerVersion baseLayer) {
-    return List.of(
+    LayerVersion baseLayer) {
+    return List
+      .of(
         new LambdaIntegrationConstruct(this, common, authorizer, conf.resource(), vpc, stack, this.api().getRoot(),
-            stack.requestModels(), baseLayer).resource());
+          stack.requestModels(), baseLayer).resource());
   }
 }

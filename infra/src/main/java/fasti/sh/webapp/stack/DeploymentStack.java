@@ -1,5 +1,8 @@
 package fasti.sh.webapp.stack;
 
+import static fasti.sh.execute.serialization.Format.describe;
+import static fasti.sh.execute.serialization.Format.id;
+
 import fasti.sh.execute.aws.vpc.NetworkNestedStack;
 import fasti.sh.webapp.stack.nested.ApiNestedStack;
 import fasti.sh.webapp.stack.nested.AuthNestedStack;
@@ -10,9 +13,6 @@ import software.amazon.awscdk.NestedStackProps;
 import software.amazon.awscdk.Stack;
 import software.amazon.awscdk.StackProps;
 import software.constructs.Construct;
-
-import static fasti.sh.execute.serialization.Format.describe;
-import static fasti.sh.execute.serialization.Format.id;
 
 @Getter
 public class DeploymentStack extends Stack {
@@ -27,19 +27,22 @@ public class DeploymentStack extends Stack {
 
     this.network = new NetworkNestedStack(
       this, conf.common(), conf.vpc(),
-      NestedStackProps.builder()
+      NestedStackProps
+        .builder()
         .description(describe(conf.common(), "webapp::network"))
         .build());
 
     this.ses = new SesNestedStack(
       this, conf.common(), conf.ses(),
-      NestedStackProps.builder()
+      NestedStackProps
+        .builder()
         .description(describe(conf.common(), "webapp::ses"))
         .build());
 
     this.auth = new AuthNestedStack(
       this, conf.common(), conf.auth(), this.network().vpc(),
-      NestedStackProps.builder()
+      NestedStackProps
+        .builder()
         .description(describe(conf.common(), "webapp::auth"))
         .build());
 
@@ -47,13 +50,15 @@ public class DeploymentStack extends Stack {
 
     this.db = new DbNestedStack(
       this, conf.common(), conf.db(),
-      NestedStackProps.builder()
+      NestedStackProps
+        .builder()
         .description(describe(conf.common(), "webapp::db"))
         .build());
 
     this.api = new ApiNestedStack(
       this, conf.common(), conf.api(), this.network().vpc(),
-      NestedStackProps.builder()
+      NestedStackProps
+        .builder()
         .description(describe(conf.common(), "webapp::api"))
         .build());
 
