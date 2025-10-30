@@ -24,7 +24,7 @@
         <maven.surefire.plugin.version>3.5.4</maven.surefire.plugin.version>
         <maven.shade.plugin.version>3.6.1</maven.shade.plugin.version>
         <maven.compiler.plugin.version>3.14.1</maven.compiler.plugin.version>
-        <aws.sdk.version>2.36.3</aws.sdk.version>
+        <aws.sdk.version>2.37.1</aws.sdk.version>
         <aws.lambda.java.core>1.4.0</aws.lambda.java.core>
         <aws.lambda.java.events>3.16.1</aws.lambda.java.events>
         <jackson.version>2.20.0</jackson.version>
