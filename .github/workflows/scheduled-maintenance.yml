@@ -252,6 +252,12 @@ jobs:
           distribution: ${{ env.JAVA_DISTRIBUTION }}
           cache: maven
 
+      - name: Build cdk-common dependency
+        run: |
+          git clone https://github.com/fast-ish/cdk-common.git /tmp/cdk-common
+          cd /tmp/cdk-common
+          mvn clean install -DskipTests -B
+
       - name: Run health checks
         run: |
           echo "## 🏥 Repository Health Check" >> $GITHUB_STEP_SUMMARY

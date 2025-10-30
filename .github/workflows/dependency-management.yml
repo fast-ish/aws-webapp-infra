@@ -31,7 +31,13 @@ jobs:
           java-version: '21'
           distribution: 'corretto'
           cache: maven
-    
+
+      - name: build cdk-common dependency
+        run: |
+          git clone https://github.com/fast-ish/cdk-common.git /tmp/cdk-common
+          cd /tmp/cdk-common
+          mvn clean install -DskipTests -B
+
       - name: run tests for dependency update
         run: |
           echo "running tests to validate dependency update..."
