@@ -88,12 +88,12 @@ Get-FileHash cdk-common-1.0.0.jar -Algorithm SHA256
 ## Dependencies
 
 This library requires the following dependencies (specified in the POM file):
-- AWS CDK Lib: 2.199.0
-- AWS SDK: 2.32.31
-- Jackson: 2.19.2
-- Lombok: 1.18.38
-- Apache Commons IO: 2.20.0
-- Apache Commons Lang3: 3.18.0
+- AWS CDK Lib: 2.221.0
+- AWS SDK v2: 2.36.3
+- Jackson BOM: 2.20.0
+- Lombok: 1.18.42
+- JUnit 5: 5.14.0
+- Mockito: 5.20.0
 - And others as specified in the POM
 
 ## IDE Integration

@@ -18,11 +18,11 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <maven.shade.plugin.version>3.6.1</maven.shade.plugin.version>
-        <maven.compiler.plugin.version>3.14.0</maven.compiler.plugin.version>
-        <aws.java.sdk.version>2.33.9</aws.java.sdk.version>
+        <maven.compiler.plugin.version>3.14.1</maven.compiler.plugin.version>
+        <aws.java.sdk.version>2.36.3</aws.java.sdk.version>
         <fn.layer.version>1.0.0-SNAPSHOT</fn.layer.version>
         <lombok.version>1.18.42</lombok.version>
-        <junit5.version>5.13.4</junit5.version>
+        <junit5.version>5.14.0</junit5.version>
     </properties>
 
     <dependencyManagement>
@@ -31,6 +31,13 @@
                 <groupId>software.amazon.awssdk</groupId>
                 <artifactId>bom</artifactId>
                 <version>${aws.java.sdk.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>2.20.0</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
