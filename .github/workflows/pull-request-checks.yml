@@ -240,6 +240,19 @@ jobs:
           distribution: 'corretto'
           cache: maven
 
+      - name: Build cdk-common dependency
+        run: |
+          echo "📦 Building cdk-common dependency..." >> $GITHUB_STEP_SUMMARY
+
+          # Clone cdk-common repository
+          git clone https://github.com/fast-ish/cdk-common.git /tmp/cdk-common
+
+          # Build and install cdk-common to local Maven repo
+          cd /tmp/cdk-common
+          mvn clean install -DskipTests -B
+
+          echo "✅ cdk-common built and installed" >> $GITHUB_STEP_SUMMARY
+
       - name: Run quick checks
         run: |
           echo "## 🔍 Quick Validation Checks" >> $GITHUB_STEP_SUMMARY

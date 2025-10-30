@@ -1,16 +1,15 @@
 package fasti.sh.webapp.stack.nested;
 
+import static fasti.sh.execute.serialization.Format.*;
+
 import fasti.sh.execute.aws.dynamodb.DynamoDbConstruct;
-import fasti.sh.webapp.stack.model.DbConf;
 import fasti.sh.model.main.Common;
+import fasti.sh.webapp.stack.model.DbConf;
 import lombok.Getter;
 import software.amazon.awscdk.CfnOutput;
 import software.amazon.awscdk.NestedStack;
 import software.amazon.awscdk.NestedStackProps;
 import software.constructs.Construct;
-
-import static fasti.sh.execute.serialization.Format.*;
-
 
 @Getter
 public class DbNestedStack extends NestedStack {

@@ -1,10 +1,14 @@
 package fasti.sh.webapp.stack.nested;
 
+import static fasti.sh.execute.serialization.Format.*;
+
 import fasti.sh.execute.aws.s3.BucketConstruct;
 import fasti.sh.execute.aws.ses.IdentityConstruct;
-import fasti.sh.webapp.stack.model.SesConf;
-import fasti.sh.model.main.Common;
 import fasti.sh.model.aws.ses.Rule;
+import fasti.sh.model.main.Common;
+import fasti.sh.webapp.stack.model.SesConf;
+import java.util.List;
+import java.util.stream.Stream;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import software.amazon.awscdk.CfnOutput;
@@ -23,11 +27,6 @@ import software.amazon.awscdk.services.ses.actions.S3;
 import software.amazon.awscdk.services.ses.actions.Sns;
 import software.amazon.awscdk.services.sns.Topic;
 import software.constructs.Construct;
-
-import java.util.List;
-import java.util.stream.Stream;
-
-import static fasti.sh.execute.serialization.Format.*;
 
 @Getter
 public class SesNestedStack extends NestedStack {
@@ -63,17 +62,23 @@ public class SesNestedStack extends NestedStack {
   }
 
   private ReceiptRuleSet receiptRuleSet(Common common, SesConf conf) {
-    var rules = conf.receiving().rules().stream()
-      .map(rule -> ReceiptRuleOptions.builder()
-        .receiptRuleName(rule.name())
-        .enabled(rule.enabled())
-        .scanEnabled(rule.scanEnabled())
-        .recipients(rule.recipients())
-        .actions(actions(common, conf, rule))
-        .build())
+    var rules = conf
+      .receiving()
+      .rules()
+      .stream()
+      .map(
+        rule -> ReceiptRuleOptions
+          .builder()
+          .receiptRuleName(rule.name())
+          .enabled(rule.enabled())
+          .scanEnabled(rule.scanEnabled())
+          .recipients(rule.recipients())
+          .actions(actions(common, conf, rule))
+          .build())
       .toList();
 
-    return ReceiptRuleSet.Builder.create(this, "receipt.rules")
+    return ReceiptRuleSet.Builder
+      .create(this, "receipt.rules")
       .receiptRuleSetName(conf.receiving().name())
       .dropSpam(conf.receiving().dropSpam())
       .rules(rules)
@@ -83,66 +88,88 @@ public class SesNestedStack extends NestedStack {
   private List<? extends IReceiptRuleAction> actions(Common common, SesConf conf, Rule rule) {
     var bucket = new BucketConstruct(this, common, conf.receiving().bucket()).bucket();
 
-    var s3Actions = rule.s3Actions()
+    var s3Actions = rule
+      .s3Actions()
       .stream()
-      .map(action -> S3.Builder.create()
-        .bucket(bucket)
-        .objectKeyPrefix(action.prefix())
-        .topic(new Topic(this, action.topic()))
-        .build())
+      .map(
+        action -> S3.Builder
+          .create()
+          .bucket(bucket)
+          .objectKeyPrefix(action.prefix())
+          .topic(new Topic(this, action.topic()))
+          .build())
       .toList();
 
-    var lambdaActions = rule.lambdaActions()
+    var lambdaActions = rule
+      .lambdaActions()
       .stream()
-      .map(action -> Lambda.Builder.create()
-        .topic(new Topic(this, action.topic()))
-        .function(null)
-        .invocationType(LambdaInvocationType.valueOf(action.invocationType()))
-        .build())
+      .map(
+        action -> Lambda.Builder
+          .create()
+          .topic(new Topic(this, action.topic()))
+          .function(null)
+          .invocationType(LambdaInvocationType.valueOf(action.invocationType()))
+          .build())
       .toList();
 
-    var snsActions = rule.snsActions()
+    var snsActions = rule
+      .snsActions()
       .stream()
-      .map(action -> Sns.Builder.create()
-        .topic(new Topic(this, action.topic()))
-        .build())
+      .map(
+        action -> Sns.Builder
+          .create()
+          .topic(new Topic(this, action.topic()))
+          .build())
       .toList();
 
-    return Stream.of(s3Actions, lambdaActions, snsActions)
+    return Stream
+      .of(s3Actions, lambdaActions, snsActions)
       .flatMap(List::stream)
       .toList();
   }
 
   private ConfigurationSetEventDestination bounceDestination(Common common, SesConf conf) {
-    return this.identity().configurationSet().addEventDestination(
-      conf.destination().bounce().topic(),
-      ConfigurationSetEventDestinationOptions.builder()
-        .enabled(conf.destination().bounce().enabled())
-        .destination(EventDestination.snsTopic(new Topic(this, conf.destination().bounce().topic())))
-        .configurationSetEventDestinationName(conf.destination().bounce().topic())
-        .events(List.of(EmailSendingEvent.BOUNCE))
-        .build());
+    return this
+      .identity()
+      .configurationSet()
+      .addEventDestination(
+        conf.destination().bounce().topic(),
+        ConfigurationSetEventDestinationOptions
+          .builder()
+          .enabled(conf.destination().bounce().enabled())
+          .destination(EventDestination.snsTopic(new Topic(this, conf.destination().bounce().topic())))
+          .configurationSetEventDestinationName(conf.destination().bounce().topic())
+          .events(List.of(EmailSendingEvent.BOUNCE))
+          .build());
   }
 
   private ConfigurationSetEventDestination rejectDestination(Common common, SesConf conf) {
-    return this.identity().configurationSet().addEventDestination(
-      conf.destination().reject().topic(),
-      ConfigurationSetEventDestinationOptions.builder()
-        .enabled(conf.destination().reject().enabled())
-        .destination(EventDestination.snsTopic(new Topic(this, conf.destination().reject().topic())))
-        .configurationSetEventDestinationName(conf.destination().reject().topic())
-        .events(List.of(EmailSendingEvent.REJECT))
-        .build());
+    return this
+      .identity()
+      .configurationSet()
+      .addEventDestination(
+        conf.destination().reject().topic(),
+        ConfigurationSetEventDestinationOptions
+          .builder()
+          .enabled(conf.destination().reject().enabled())
+          .destination(EventDestination.snsTopic(new Topic(this, conf.destination().reject().topic())))
+          .configurationSetEventDestinationName(conf.destination().reject().topic())
+          .events(List.of(EmailSendingEvent.REJECT))
+          .build());
   }
 
   private ConfigurationSetEventDestination complaintDestination(Common common, SesConf conf) {
-    return this.identity().configurationSet().addEventDestination(
-      conf.destination().complaint().topic(),
-      ConfigurationSetEventDestinationOptions.builder()
-        .enabled(conf.destination().complaint().enabled())
-        .destination(EventDestination.snsTopic(new Topic(this, conf.destination().complaint().topic())))
-        .configurationSetEventDestinationName(conf.destination().complaint().topic())
-        .events(List.of(EmailSendingEvent.COMPLAINT))
-        .build());
+    return this
+      .identity()
+      .configurationSet()
+      .addEventDestination(
+        conf.destination().complaint().topic(),
+        ConfigurationSetEventDestinationOptions
+          .builder()
+          .enabled(conf.destination().complaint().enabled())
+          .destination(EventDestination.snsTopic(new Topic(this, conf.destination().complaint().topic())))
+          .configurationSetEventDestinationName(conf.destination().complaint().topic())
+          .events(List.of(EmailSendingEvent.COMPLAINT))
+          .build());
   }
 }

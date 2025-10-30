@@ -42,6 +42,12 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
+      - name: build cdk-common dependency
+        run: |
+          git clone https://github.com/fast-ish/cdk-common.git /tmp/cdk-common
+          cd /tmp/cdk-common
+          mvn clean install -DskipTests -B
+
       - name: compile project
         run: mvn clean compile -B
 
@@ -53,7 +59,7 @@ jobs:
         if: success() || failure()
         with:
           name: maven tests
-          path: target/surefire-reports/*.xml
+          path: '**/target/surefire-reports/*.xml'
           reporter: java-junit
           fail-on-error: false
 
@@ -62,7 +68,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: test-results
-          path: target/surefire-reports/
+          path: '**/target/surefire-reports/'
           retention-days: 7
 
   code-coverage:
@@ -82,13 +88,19 @@ jobs:
           distribution: ${{ env.JAVA_DISTRIBUTION }}
           cache: maven
 
+      - name: build cdk-common dependency
+        run: |
+          git clone https://github.com/fast-ish/cdk-common.git /tmp/cdk-common
+          cd /tmp/cdk-common
+          mvn clean install -DskipTests -B
+
       - name: run tests with JaCoCo coverage
         run: mvn clean test jacoco:report -B || true
 
       - name: upload coverage to codecov
         uses: codecov/codecov-action@v4
         with:
-          files: target/site/jacoco/jacoco.xml
+          files: infra/target/site/jacoco/jacoco.xml
           flags: unittests
           name: codecov-aws-webapp-infra
           fail_ci_if_error: false
@@ -102,7 +114,7 @@ jobs:
         uses: cicirello/jacoco-badge-generator@v2
         with:
           generate-branches-badge: true
-          jacoco-csv-file: target/site/jacoco/jacoco.csv
+          jacoco-csv-file: infra/target/site/jacoco/jacoco.csv
           badges-directory: .github/badges
           generate-coverage-endpoint: true
           coverage-endpoint-filename: jacoco.json
@@ -112,7 +124,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: jacoco-report
-          path: target/site/jacoco/
+          path: infra/target/site/jacoco/
           retention-days: 7
 
       - name: comment pr with coverage
@@ -152,6 +164,12 @@ jobs:
           distribution: ${{ env.JAVA_DISTRIBUTION }}
           cache: maven
 
+      - name: build cdk-common dependency
+        run: |
+          git clone https://github.com/fast-ish/cdk-common.git /tmp/cdk-common
+          cd /tmp/cdk-common
+          mvn clean install -DskipTests -B
+
       - name: run spotbugs analysis
         run: |
           mvn clean compile spotbugs:spotbugs -B || true
@@ -162,14 +180,14 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: spotbugs-report
-          path: target/spotbugsXml.xml
+          path: infra/target/spotbugsXml.xml
           retention-days: 7
 
       - name: parse spotbugs results
         if: always()
         uses: jwgmeligmeyling/spotbugs-github-action@v1.2
         with:
-          path: target/spotbugsXml.xml
+          path: infra/target/spotbugsXml.xml
           name: spotbugs
 
   pmd-analysis:
@@ -187,6 +205,12 @@ jobs:
           distribution: ${{ env.JAVA_DISTRIBUTION }}
           cache: maven
 
+      - name: build cdk-common dependency
+        run: |
+          git clone https://github.com/fast-ish/cdk-common.git /tmp/cdk-common
+          cd /tmp/cdk-common
+          mvn clean install -DskipTests -B
+
       - name: run pmd analysis
         run: |
           mvn clean compile pmd:pmd pmd:cpd -B || true
@@ -198,15 +222,15 @@ jobs:
         with:
           name: pmd-report
           path: |
-            target/pmd.xml
-            target/cpd.xml
+            infra/target/pmd.xml
+            infra/target/cpd.xml
           retention-days: 7
 
       - name: publish pmd results
         if: always() && github.actor != 'dependabot[bot]'
         uses: jwgmeligmeyling/pmd-github-action@v1.2
         with:
-          path: target/pmd.xml
+          path: infra/target/pmd.xml
           name: pmd
         continue-on-error: true
 
@@ -225,6 +249,12 @@ jobs:
           distribution: ${{ env.JAVA_DISTRIBUTION }}
           cache: maven
 
+      - name: build cdk-common dependency
+        run: |
+          git clone https://github.com/fast-ish/cdk-common.git /tmp/cdk-common
+          cd /tmp/cdk-common
+          mvn clean install -DskipTests -B
+
       - name: run checkstyle
         run: mvn clean checkstyle:checkstyle -B || true
 
@@ -233,14 +263,14 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: checkstyle-report
-          path: target/checkstyle-result.xml
+          path: infra/target/checkstyle-result.xml
           retention-days: 7
 
       - name: publish checkstyle results
         if: always() && github.actor != 'dependabot[bot]'
         uses: jwgmeligmeyling/checkstyle-github-action@v1.2
         with:
-          path: target/checkstyle-result.xml
+          path: infra/target/checkstyle-result.xml
           name: checkstyle
         continue-on-error: true
 
@@ -293,6 +323,12 @@ jobs:
           distribution: ${{ env.JAVA_DISTRIBUTION }}
           cache: maven
 
+      - name: build cdk-common dependency
+        run: |
+          git clone https://github.com/fast-ish/cdk-common.git /tmp/cdk-common
+          cd /tmp/cdk-common
+          mvn clean install -DskipTests -B
+
       - name: analyze dependencies
         run: |
           mvn dependency:analyze -B || true
@@ -322,6 +358,12 @@ jobs:
           java-version: ${{ env.JAVA_VERSION }}
           distribution: ${{ env.JAVA_DISTRIBUTION }}
           cache: maven
+
+      - name: build cdk-common dependency
+        run: |
+          git clone https://github.com/fast-ish/cdk-common.git /tmp/cdk-common
+          cd /tmp/cdk-common
+          mvn clean install -DskipTests -B
 
       - name: cache sonarcloud packages
         uses: actions/cache@v4
