@@ -21,7 +21,7 @@
         <aws.java.sdk.version>2.37.1</aws.java.sdk.version>
         <fn.layer.version>1.0.0-SNAPSHOT</fn.layer.version>
         <lombok.version>1.18.42</lombok.version>
-        <junit5.version>6.0.0</junit5.version>
+        <junit5.version>6.0.1</junit5.version>
     </properties>
 
     <dependencyManagement>
@@ -36,7 +36,7 @@
             <dependency>
                 <groupId>com.fasterxml.jackson</groupId>
                 <artifactId>jackson-bom</artifactId>
-                <version>2.20.0</version>
+                <version>2.20.1</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
