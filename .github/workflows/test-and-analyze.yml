@@ -97,18 +97,6 @@ jobs:
       - name: run tests with JaCoCo coverage
         run: mvn clean test jacoco:report -B || true
 
-      - name: upload coverage to codecov
-        uses: codecov/codecov-action@v4
-        with:
-          files: infra/target/site/jacoco/jacoco.xml
-          flags: unittests
-          name: codecov-aws-webapp-infra
-          fail_ci_if_error: false
-          verbose: true
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-        continue-on-error: true
-
       - name: generate jacoco badge
         id: jacoco
         uses: cicirello/jacoco-badge-generator@v2
@@ -340,49 +328,6 @@ jobs:
 
       - name: check for plugin updates
         run: mvn versions:display-plugin-updates -B
-
-  sonarcloud:
-    name: sonarcloud analysis
-    runs-on: ubuntu-latest
-    if: github.event_name != 'schedule'
-
-    steps:
-      - name: checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: set up jdk ${{ env.JAVA_VERSION }}
-        uses: actions/setup-java@v4
-        with:
-          java-version: ${{ env.JAVA_VERSION }}
-          distribution: ${{ env.JAVA_DISTRIBUTION }}
-          cache: maven
-
-      - name: build cdk-common dependency
-        run: |
-          git clone https://github.com/fast-ish/cdk-common.git /tmp/cdk-common
-          cd /tmp/cdk-common
-          mvn clean install -DskipTests -B
-
-      - name: cache sonarcloud packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.sonar/cache
-          key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar
-
-      - name: analyze with sonarcloud
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: |
-          mvn clean verify sonar:sonar \
-            -Dsonar.projectKey=aws-webapp-infra \
-            -Dsonar.organization=tinstafl \
-            -Dsonar.host.url=https://sonarcloud.io \
-            -Dsonar.java.source=${{ env.JAVA_VERSION }} \
-            -B || true
 
   quality-gate:
     name: quality gate
