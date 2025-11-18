@@ -45,22 +45,12 @@ jobs:
           echo "✅ tests passed with updated dependencies"
         continue-on-error: false
 
-      - name: auto-approve patch and minor updates
-        if: steps.metadata.outputs.update-type == 'version-update:semver-patch' || steps.metadata.outputs.update-type == 'version-update:semver-minor'
-        run: |
-          echo "auto-approving ${{ steps.metadata.outputs.update-type }}"
-          gh pr review --approve "$PR_URL"
-          echo "✅ pull request approved"
-        env:
-          PR_URL: ${{ github.event.pull_request.html_url }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: auto-merge patch updates
+      - name: label patch updates
         if: steps.metadata.outputs.update-type == 'version-update:semver-patch'
         run: |
-          echo "auto-merging patch update"
-          gh pr merge --auto --squash "$PR_URL"
-          echo "✅ merge scheduled for patch update"
+          echo "adding label for patch update"
+          gh pr edit "$PR_URL" --add-label "patch-update"
+          echo "✅ patch update - ready for manual review and merge"
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -113,7 +103,7 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
 
           if [[ "${{ steps.metadata.outputs.update-type }}" == "version-update:semver-patch" ]]; then
-            echo "✅ **patch update - auto-merge scheduled**" >> $GITHUB_STEP_SUMMARY
+            echo "✅ **patch update - tests passed, ready for review**" >> $GITHUB_STEP_SUMMARY
           elif [[ "${{ steps.metadata.outputs.update-type }}" == "version-update:semver-minor" ]]; then
             echo "⚠️ **minor update - manual review required**" >> $GITHUB_STEP_SUMMARY
           else
