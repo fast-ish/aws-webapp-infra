@@ -1,0 +1,23 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended"
+  ],
+  "schedule": [
+    "before 6am on monday"
+  ],
+  "timezone": "UTC",
+  "prConcurrentLimit": 4,
+  "prHourlyLimit": 3,
+  "separateMinorPatch": true,
+  "ignoreDeps": [
+    "fastish:cdk-common"
+  ],
+  "packageRules": [
+    {
+      "description": "Ignore internal fastish dependencies",
+      "matchPackageNames": ["fastish:cdk-common"],
+      "enabled": false
+    }
+  ]
+}
