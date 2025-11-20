@@ -86,7 +86,7 @@ All infrastructure is defined through YAML/JSON configuration files processed by
 
 ```yaml
 # resources/prototype/v1/cognito/user-pool.yaml
-name: "{{hosted:name}}"
+name: "{{deployment:name}}"
 passwordPolicy:
   minimumLength: 8
   requireLowercase: true
@@ -121,11 +121,11 @@ Infrastructure uses CDK context from `cdk.context.json`:
 
 ```json
 {
-  "host:account": "123456789012",
-  "host:region": "us-west-2",
-  "hosted:domain": "fasti.sh",
-  "hosted:environment": "prototype",
-  "hosted:version": "v1",
+  "platform:account": "123456789012",
+  "platform:region": "us-west-2",
+  "deployment:domain": "fasti.sh",
+  "deployment:environment": "prototype",
+  "deployment:version": "v1",
   "ses:hosted:zone": "Z1234567890ABC",
   "ses:email": "no-reply@fasti.sh"
 }
@@ -173,8 +173,8 @@ Templates use Mustache syntax with CDK context injection:
 
 ```yaml
 # Input template
-name: "{{hosted:name}}-user-pool"
-domain: "{{hosted:domain}}"
+name: "{{deployment:name}}-user-pool"
+domain: "{{deployment:domain}}"
 
 # After processing (with context)
 name: "webapp-user-pool"

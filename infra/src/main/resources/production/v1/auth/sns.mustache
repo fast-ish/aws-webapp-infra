@@ -1,19 +1,19 @@
 enabled: true
-externalId: {{hosted:name}}
+externalId: {{deployment:name}}
 role:
-  name: {{hosted:id}}-webapp-cognito-sns
+  name: {{deployment:id}}-webapp-cognito-sns
   principal:
     type: service
     value: cognito-idp.amazonaws.com
     conditions:
       StringEquals:
-        "sts:ExternalId": {{hosted:name}}
+        "sts:ExternalId": {{deployment:name}}
   managedPolicyNames:
     - AmazonSNSFullAccess
   customPolicies: [ ]
   tags:
-    "{{hosted:domain}}:resource-type": sns
-    "{{hosted:domain}}:category": public
-    "{{hosted:domain}}:type": sms
-    "{{hosted:domain}}:component": "{{hosted:id}}-webapp-cognito-sns"
-    "{{hosted:domain}}:part-of": "{{synthesizer:name}}:{{hosted:organization}}:{{hosted:name}}:{{hosted:alias}}:webapp"
+    "{{deployment:domain}}:resource-type": sns
+    "{{deployment:domain}}:category": public
+    "{{deployment:domain}}:type": sms
+    "{{deployment:domain}}:component": "{{deployment:id}}-webapp-cognito-sns"
+    "{{deployment:domain}}:part-of": "{{synthesizer:name}}:{{deployment:organization}}:{{deployment:name}}:{{deployment:alias}}:webapp"

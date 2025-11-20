@@ -10,7 +10,7 @@
   ],
   "Condition": {
     "StringEquals": {
-      "AWS:SourceAccount": "{{hosted:account}}",
+      "AWS:SourceAccount": "{{deployment:account}}",
       "AWS:SourceArn": "{{receiptRule}}"
     }
   }

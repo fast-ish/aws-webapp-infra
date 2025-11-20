@@ -1,57 +1,57 @@
-host:
+platform:
   common:
-    id: {{host:id}}
-    organization: {{host:organization}}
-    account: {{host:account}}
-    region: {{host:region}}
-    name: {{host:name}}
-    alias: {{host:alias}}
-    environment: {{host:environment}}
-    version: {{host:version}}
-    domain: {{host:domain}}
+    id: {{platform:id}}
+    organization: {{platform:organization}}
+    account: {{platform:account}}
+    region: {{platform:region}}
+    name: {{platform:name}}
+    alias: {{platform:alias}}
+    environment: {{platform:environment}}
+    version: {{platform:version}}
+    domain: {{platform:domain}}
     tags:
-      "{{host:domain}}:billing": {{host:organization}}
-      "{{host:domain}}:managed-by": {{host:organization}}
-      "{{host:domain}}:account": {{host:account}}
-      "{{host:domain}}:region": {{host:region}}
-      "{{host:domain}}:name": {{host:name}}
-      "{{host:domain}}:type": {{host:alias}}
-      "{{host:domain}}:environment": {{host:environment}}
-      "{{host:domain}}:version": {{host:version}}
-      "{{host:domain}}:part-of": "{{host:organization}}:{{host:account}}:{{host:name}}:{{host:alias}}"
+      "{{platform:domain}}:billing": {{platform:organization}}
+      "{{platform:domain}}:managed-by": {{platform:organization}}
+      "{{platform:domain}}:account": {{platform:account}}
+      "{{platform:domain}}:region": {{platform:region}}
+      "{{platform:domain}}:name": {{platform:name}}
+      "{{platform:domain}}:type": {{platform:alias}}
+      "{{platform:domain}}:environment": {{platform:environment}}
+      "{{platform:domain}}:version": {{platform:version}}
+      "{{platform:domain}}:part-of": "{{platform:organization}}:{{platform:account}}:{{platform:name}}:{{platform:alias}}"
 
-hosted:
+deployment:
   common:
-    id: {{hosted:id}}
-    organization: {{hosted:organization}}
-    account: {{hosted:account}}
-    region: {{hosted:region}}
-    name: {{hosted:name}}
-    alias: {{hosted:alias}}
-    environment: {{hosted:environment}}
-    version: {{hosted:version}}
-    domain: {{hosted:domain}}
+    id: {{deployment:id}}
+    organization: {{deployment:organization}}
+    account: {{deployment:account}}
+    region: {{deployment:region}}
+    name: {{deployment:name}}
+    alias: {{deployment:alias}}
+    environment: {{deployment:environment}}
+    version: {{deployment:version}}
+    domain: {{deployment:domain}}
     tags:
-      "{{hosted:domain}}:billing": {{hosted:organization}}
-      "{{hosted:domain}}:managed-by": {{hosted:organization}}
-      "{{hosted:domain}}:account": {{hosted:account}}
-      "{{hosted:domain}}:region": {{hosted:region}}
-      "{{hosted:domain}}:name": {{hosted:name}}
-      "{{hosted:domain}}:alias": {{hosted:alias}}
-      "{{hosted:domain}}:environment": {{hosted:environment}}
-      "{{hosted:domain}}:version": {{hosted:version}}
-      "{{hosted:domain}}:part-of": "{{synthesizer:name}}:{{hosted:organization}}:{{hosted:name}}:{{hosted:alias}}:webapp"
+      "{{deployment:domain}}:billing": {{deployment:organization}}
+      "{{deployment:domain}}:managed-by": {{deployment:organization}}
+      "{{deployment:domain}}:account": {{deployment:account}}
+      "{{deployment:domain}}:region": {{deployment:region}}
+      "{{deployment:domain}}:name": {{deployment:name}}
+      "{{deployment:domain}}:alias": {{deployment:alias}}
+      "{{deployment:domain}}:environment": {{deployment:environment}}
+      "{{deployment:domain}}:version": {{deployment:version}}
+      "{{deployment:domain}}:part-of": "{{synthesizer:name}}:{{deployment:organization}}:{{deployment:name}}:{{deployment:alias}}:webapp"
 
   vpc:
-    name: {{hosted:id}}-webapp-vpc
+    name: {{deployment:id}}-webapp-vpc
     cidr: 192.168.0.0/16
     ipProtocol: ipv4_only
     natGateways: 2
     createInternetGateway: true
     availabilityZones:
-      - {{hosted:region}}a
-      - {{hosted:region}}b
-      - {{hosted:region}}c
+      - {{deployment:region}}a
+      - {{deployment:region}}b
+      - {{deployment:region}}c
     enableDnsSupport: true
     enableDnsHostnames: true
     defaultInstanceTenancy: default
@@ -63,112 +63,112 @@ hosted:
         subnetType: public
         mapPublicIpOnLaunch: false
         tags:
-          "{{hosted:domain}}:resource-type": subnet
-          "{{hosted:domain}}:category": network
-          "{{hosted:domain}}:type": public
-          "{{hosted:domain}}:cidrMask": 24
-          "{{hosted:domain}}:component": {{hosted:id}}-webapp-vpc-subnet
-          "{{hosted:domain}}:part-of": "{{synthesizer:name}}:{{hosted:organization}}:{{hosted:name}}:{{hosted:alias}}:webapp"
+          "{{deployment:domain}}:resource-type": subnet
+          "{{deployment:domain}}:category": network
+          "{{deployment:domain}}:type": public
+          "{{deployment:domain}}:cidrMask": 24
+          "{{deployment:domain}}:component": {{deployment:id}}-webapp-vpc-subnet
+          "{{deployment:domain}}:part-of": "{{synthesizer:name}}:{{deployment:organization}}:{{deployment:name}}:{{deployment:alias}}:webapp"
       - name: private
         cidrMask: 24
         reserved: false
         subnetType: private_with_egress
         tags:
-          "{{hosted:domain}}:resource-type": subnet
-          "{{hosted:domain}}:category": network
-          "{{hosted:domain}}:type": private_with_egress
-          "{{hosted:domain}}:cidrMask": 24
-          "{{hosted:domain}}:component": {{hosted:id}}-webapp-vpc-subnet
-          "{{hosted:domain}}:part-of": "{{synthesizer:name}}:{{hosted:organization}}:{{hosted:name}}:{{hosted:alias}}:webapp"
+          "{{deployment:domain}}:resource-type": subnet
+          "{{deployment:domain}}:category": network
+          "{{deployment:domain}}:type": private_with_egress
+          "{{deployment:domain}}:cidrMask": 24
+          "{{deployment:domain}}:component": {{deployment:id}}-webapp-vpc-subnet
+          "{{deployment:domain}}:part-of": "{{synthesizer:name}}:{{deployment:organization}}:{{deployment:name}}:{{deployment:alias}}:webapp"
     tags:
-      "{{hosted:domain}}:resource-type": vpc
-      "{{hosted:domain}}:category": network
-      "{{hosted:domain}}:type": network
-      "{{hosted:domain}}:cidrMask": 24
-      "{{hosted:domain}}:component": {{hosted:id}}-webapp-vpc
-      "{{hosted:domain}}:part-of": "{{synthesizer:name}}:{{hosted:organization}}:{{hosted:name}}:{{hosted:alias}}:webapp"
+      "{{deployment:domain}}:resource-type": vpc
+      "{{deployment:domain}}:category": network
+      "{{deployment:domain}}:type": network
+      "{{deployment:domain}}:cidrMask": 24
+      "{{deployment:domain}}:component": {{deployment:id}}-webapp-vpc
+      "{{deployment:domain}}:part-of": "{{synthesizer:name}}:{{deployment:organization}}:{{deployment:name}}:{{deployment:alias}}:webapp"
 
   ses:
     identity:
-      hostedZone: {{hosted:ses:hosted:zone}}
-      email: {{hosted:ses:email}}
-      domain: {{hosted:domain}}
+      hostedZone: {{deployment:ses:hosted:zone}}
+      email: {{deployment:ses:email}}
+      domain: {{deployment:domain}}
       mxFailure: use_default_value
-      mailFromDomain: feedback.{{hosted:domain}}
+      mailFromDomain: feedback.{{deployment:domain}}
       feedbackForwarding: true
       configurationSet:
-        name: {{hosted:id}}-webapp-configuration-set
-        customTrackingRedirectDomain: {{hosted:domain}}
+        name: {{deployment:id}}-webapp-configuration-set
+        customTrackingRedirectDomain: {{deployment:domain}}
         reputationMetrics: true
         sendingEnabled: true
         tlsPolicyConfiguration: optional
         suppressionReasons: bounces_and_complaints
         dedicatedIpPool:
           enabled: false
-          name: {{hosted:id}}-webapp-ip-pool
+          name: {{deployment:id}}-webapp-ip-pool
           scalingMode: standard
     receiving:
-      name: {{hosted:id}}-webapp-receipt-rules
+      name: {{deployment:id}}-webapp-receipt-rules
       dropSpam: false
       bucket:
-        name: {{hosted:id}}-webapp-ses-received-emails
+        name: {{deployment:id}}-webapp-ses-received-emails
         accessControl: bucket_owner_full_control
         objectOwnership: bucket_owner_enforced
         removalPolicy: destroy
         autoDeleteObjects: true
         bucketPolicies:
-          - name: {{hosted:id}}-webapp-ses-receipts
+          - name: {{deployment:id}}-webapp-ses-receipts
             policy: policy/ses/put-emails.mustache
             principals:
               - type: service
                 value: ses.amazonaws.com
             mappings:
-              receiptRule: arn:aws:ses:{{hosted:region}}:{{hosted:account}}:receipt-rule-set/{{hosted:id}}-webapp-receipt-rules:receipt-rule/*
+              receiptRule: arn:aws:ses:{{deployment:region}}:{{deployment:account}}:receipt-rule-set/{{deployment:id}}-webapp-receipt-rules:receipt-rule/*
               resources:
-                - arn:aws:s3:::{{hosted:id}}-webapp-ses-received-emails/*
-                - arn:aws:s3:::{{hosted:id}}-webapp-ses-received-emails
+                - arn:aws:s3:::{{deployment:id}}-webapp-ses-received-emails/*
+                - arn:aws:s3:::{{deployment:id}}-webapp-ses-received-emails
         lifecycleRules:
-          - id: {{hosted:id}}-webapp-ses-received-emails
+          - id: {{deployment:id}}-webapp-ses-received-emails
             expiration: 1
             enabled: true
         tags:
-          "{{hosted:domain}}:resource-type": s3
-          "{{hosted:domain}}:category": ses
-          "{{hosted:domain}}:type": received
-          "{{hosted:domain}}:component": {{hosted:id}}-webapp-ses
-          "{{hosted:domain}}:part-of": "{{synthesizer:name}}:{{hosted:organization}}:{{hosted:name}}:{{hosted:alias}}:webapp"
+          "{{deployment:domain}}:resource-type": s3
+          "{{deployment:domain}}:category": ses
+          "{{deployment:domain}}:type": received
+          "{{deployment:domain}}:component": {{deployment:id}}-webapp-ses
+          "{{deployment:domain}}:part-of": "{{synthesizer:name}}:{{deployment:organization}}:{{deployment:name}}:{{deployment:alias}}:webapp"
       rules:
         - name: email-receipt
           enabled: true
           scanEnabled: true
           recipients:
-            - hi@{{hosted:domain}}
+            - hi@{{deployment:domain}}
           s3Actions:
             - prefix: emails/
-              topic: {{hosted:id}}-webapp-received-emails
+              topic: {{deployment:id}}-webapp-received-emails
     destination:
       bounce:
         enabled: true
-        topic: "{{hosted:id}}-webapp-bounce"
-        configurationSet: "{{hosted:id}}-webapp-configuration-set"
+        topic: "{{deployment:id}}-webapp-bounce"
+        configurationSet: "{{deployment:id}}-webapp-configuration-set"
       reject:
         enabled: true
-        topic: "{{hosted:id}}-webapp-complaint"
-        configurationSet: "{{hosted:id}}-webapp-configuration-set"
+        topic: "{{deployment:id}}-webapp-complaint"
+        configurationSet: "{{deployment:id}}-webapp-configuration-set"
       complaint:
-        topic: "{{hosted:id}}-webapp-reject"
-        configurationSet: "{{hosted:id}}-webapp-configuration-set"
+        topic: "{{deployment:id}}-webapp-reject"
+        configurationSet: "{{deployment:id}}-webapp-configuration-set"
         enabled: true
 
   auth:
-    vpcName: {{hosted:id}}-webapp-vpc
+    vpcName: {{deployment:id}}-webapp-vpc
     userPool: auth/userpool.mustache
     userPoolClient: auth/userpoolclient.mustache
 
   db:
-    vpcName: {{hosted:id}}-webapp-vpc
+    vpcName: {{deployment:id}}-webapp-vpc
     user:
-      name: {{hosted:id}}-webapp-db-user
+      name: {{deployment:id}}-webapp-db-user
       partitionKey:
         name: id
         type: string
@@ -185,7 +185,7 @@ hosted:
       streams:
         kinesis:
           enabled: false
-          name: {{hosted:id}}-webapp-db-user-change
+          name: {{deployment:id}}-webapp-db-user-change
           shards: 2
           mode: on_demand
           encryption: unencrypted
@@ -198,11 +198,11 @@ hosted:
 
   api:
     authorizer:
-      name: {{hosted:id}}-webapp-api
+      name: {{deployment:id}}-webapp-api
     apigw:
-      vpcName: {{hosted:id}}-webapp-vpc
-      name: {{hosted:id}}-webapp-api
-      description: "{{hosted:id}} api gateway for webapp resources"
+      vpcName: {{deployment:id}}-webapp-vpc
+      name: {{deployment:id}}-webapp-api
+      description: "{{deployment:id}} api gateway for webapp resources"
       cloudwatchEnabled: true
       disableExecuteApi: false
       authorizationType: cognito
@@ -216,7 +216,7 @@ hosted:
       methodResponses: [ ]
       stageOptions:
         stageName: v1
-        description: "{{hosted:id}} api"
+        description: "{{deployment:id}} api"
         loggingLevel: info
         variables: { }
         tracingEnabled: true
@@ -226,14 +226,14 @@ hosted:
         throttlingBurstLimit: 20.0
         throttlingRateLimit: 50
       logGroup:
-        name: {{hosted:id}}-webapp-apigw-logs
+        name: {{deployment:id}}-webapp-apigw-logs
         type: standard
         retention: one_day
         removalPolicy: destroy
       tags:
-        "{{hosted:domain}}:resource-type": http-api-gateway
-        "{{hosted:domain}}:category": api
-        "{{hosted:domain}}:type": public
-        "{{hosted:domain}}:component": {{hosted:id}}-webapp-api
-        "{{hosted:domain}}:part-of": "{{synthesizer:name}}:{{hosted:organization}}:{{hosted:name}}:{{hosted:alias}}:webapp"
+        "{{deployment:domain}}:resource-type": http-api-gateway
+        "{{deployment:domain}}:category": api
+        "{{deployment:domain}}:type": public
+        "{{deployment:domain}}:component": {{deployment:id}}-webapp-api
+        "{{deployment:domain}}:part-of": "{{synthesizer:name}}:{{deployment:organization}}:{{deployment:name}}:{{deployment:alias}}:webapp"
     resource: api/user.mustache

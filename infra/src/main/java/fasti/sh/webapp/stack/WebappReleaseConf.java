@@ -7,7 +7,7 @@ import fasti.sh.webapp.stack.model.AuthConf;
 import fasti.sh.webapp.stack.model.DbConf;
 import fasti.sh.webapp.stack.model.SesConf;
 
-public record DeploymentConf(
+public record WebappReleaseConf(
   Common common,
   NetworkConf vpc,
   SesConf ses,

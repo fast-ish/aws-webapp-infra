@@ -8,10 +8,10 @@ import fasti.sh.execute.serialization.Mapper;
 import fasti.sh.execute.serialization.Template;
 import fasti.sh.model.aws.cdk.Synthesizer;
 import fasti.sh.model.main.Common;
-import fasti.sh.model.main.Hosted;
-import fasti.sh.model.main.common.Bare;
-import fasti.sh.webapp.stack.DeploymentConf;
-import fasti.sh.webapp.stack.DeploymentStack;
+import fasti.sh.model.main.Release;
+
+import fasti.sh.webapp.stack.WebappReleaseConf;
+import fasti.sh.webapp.stack.WebappStack;
 import java.util.Map;
 import lombok.SneakyThrows;
 import software.amazon.awscdk.App;
@@ -28,34 +28,34 @@ public class Launch {
 
     var conf = get(app);
 
-    new DeploymentStack(
-      app, conf.hosted(),
+    new WebappStack(
+      app, conf.release(),
       StackProps
         .builder()
-        .stackName(name(conf.hosted().common().id(), "webapp"))
+        .stackName(name(conf.release().common().id(), "webapp"))
         .env(
           Environment
             .builder()
-            .account(conf.hosted().common().account())
-            .region(conf.hosted().common().region())
+            .account(conf.release().common().account())
+            .region(conf.release().common().region())
             .build())
         .description(
           describe(
-            conf.host().common(),
+            conf.platform(),
             String
               .format(
                 "%s %s webapp",
-                conf.hosted().common().name(),
-                conf.hosted().common().alias())))
+                conf.release().common().name(),
+                conf.release().common().alias())))
         .synthesizer(synthesizer(app))
-        .tags(Common.Maps.from(conf.host().common().tags(), conf.hosted().common().tags()))
+        .tags(Common.Maps.from(conf.platform().tags(), conf.release().common().tags()))
         .build());
 
     app.synth();
   }
 
   @SneakyThrows
-  private static Hosted<Bare, DeploymentConf> get(App app) {
+  private static Release<WebappReleaseConf> get(App app) {
     var parsed = Template
       .parse(
         app,
@@ -65,7 +65,7 @@ public class Launch {
             Map.entry("hosted:ses:hosted:zone", app.getNode().getContext("hosted:ses:hosted:zone")),
             Map.entry("hosted:ses:email", app.getNode().getContext("hosted:ses:email"))));
 
-    var type = new TypeReference<Hosted<Bare, DeploymentConf>>() {};
+    var type = new TypeReference<Release<WebappReleaseConf>>() {};
     return Mapper.get().readValue(parsed, type);
   }
 
