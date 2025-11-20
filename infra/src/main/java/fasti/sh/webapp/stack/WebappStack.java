@@ -15,14 +15,14 @@ import software.amazon.awscdk.StackProps;
 import software.constructs.Construct;
 
 @Getter
-public class DeploymentStack extends Stack {
+public class WebappStack extends Stack {
   private final NetworkNestedStack network;
   private final SesNestedStack ses;
   private final AuthNestedStack auth;
   private final DbNestedStack db;
   private final ApiNestedStack api;
 
-  public DeploymentStack(Construct scope, DeploymentConf conf, StackProps props) {
+  public WebappStack(Construct scope, WebappReleaseConf conf, StackProps props) {
     super(scope, id("webapp", conf.common().version()), props);
 
     this.network = new NetworkNestedStack(

@@ -5,7 +5,7 @@ base:
   runtimes: [ "java21" ]
 
 customMessage:
-  name: {{hosted:id}}-webapp-message-trigger
+  name: {{deployment:id}}-webapp-message-trigger
   asset: "/root/.m2/repository/ui/webapp/fn/auth.fn.message/1.0.0-SNAPSHOT/auth.fn.message-1.0.0-SNAPSHOT.jar"
   handler: ui.webapp.Handler
   subnetType: private_with_egress
@@ -13,7 +13,7 @@ customMessage:
   memorySize: 256
   runtime: java21
   role:
-    name: {{hosted:id}}-webapp-message-trigger-access
+    name: {{deployment:id}}-webapp-message-trigger-access
     principal:
       type: service
       value: lambda.amazonaws.com
@@ -21,14 +21,14 @@ customMessage:
       - service-role/AWSLambdaBasicExecutionRole
       - service-role/AWSLambdaVPCAccessExecutionRole
     tags:
-      "{{hosted:domain}}:resource-type": role
-      "{{hosted:domain}}:category": auth
-      "{{hosted:domain}}:type": user
-      "{{hosted:domain}}:component": "{{hosted:id}}-webapp-custom-message-trigger"
-      "{{hosted:domain}}:part-of": "{{synthesizer:name}}:{{hosted:organization}}:{{hosted:name}}:{{hosted:alias}}:webapp"
+      "{{deployment:domain}}:resource-type": role
+      "{{deployment:domain}}:category": auth
+      "{{deployment:domain}}:type": user
+      "{{deployment:domain}}:component": "{{deployment:id}}-webapp-custom-message-trigger"
+      "{{deployment:domain}}:part-of": "{{synthesizer:name}}:{{deployment:organization}}:{{deployment:name}}:{{deployment:alias}}:webapp"
 
 postConfirmation:
-  name: {{hosted:id}}-webapp-post-confirmation-trigger
+  name: {{deployment:id}}-webapp-post-confirmation-trigger
   asset: "/root/.m2/repository/ui/webapp/fn/auth.fn.post-confirmation/1.0.0-SNAPSHOT/auth.fn.post-confirmation-1.0.0-SNAPSHOT.jar"
   handler: "ui.webapp.Handler"
   subnetType: private_with_egress
@@ -36,9 +36,9 @@ postConfirmation:
   memorySize: 256
   runtime: java21
   environment:
-    DYNAMODB_USER_TABLE: "{{hosted:id}}-webapp-db-user"
+    DYNAMODB_USER_TABLE: "{{deployment:id}}-webapp-db-user"
   role:
-    name: {{hosted:id}}-webapp-post-confirmation-trigger-access
+    name: {{deployment:id}}-webapp-post-confirmation-trigger-access
     principal:
       type: service
       value: lambda.amazonaws.com
@@ -46,19 +46,19 @@ postConfirmation:
       - service-role/AWSLambdaBasicExecutionRole
       - service-role/AWSLambdaVPCAccessExecutionRole
     customPolicies:
-      - name: allow-update-cognito-user-group-{{hosted:id}}
+      - name: allow-update-cognito-user-group-{{deployment:id}}
         policy: policy/auth/userpool-access.mustache
         mappings:
           resources:
-            - "arn:aws:cognito-idp:{{hosted:region}}:{{hosted:account}}:userpool/{{hosted:region}}_*"
-      - name: "{{host:id}}-{{hosted:id}}-user-db-access"
+            - "arn:aws:cognito-idp:{{deployment:region}}:{{deployment:account}}:userpool/{{deployment:region}}_*"
+      - name: "{{platform:id}}-{{deployment:id}}-user-db-access"
         policy: "policy/db/dynamodb-access.mustache"
         mappings:
           resources:
-            - "arn:aws:dynamodb:{{hosted:region}}:{{hosted:account}}:table/{{hosted:id}}-webapp-db-user"
+            - "arn:aws:dynamodb:{{deployment:region}}:{{deployment:account}}:table/{{deployment:id}}-webapp-db-user"
     tags:
-      "{{hosted:domain}}:resource-type": role
-      "{{hosted:domain}}:category": auth
-      "{{hosted:domain}}:type": user
-      "{{hosted:domain}}:component": "{{hosted:id}}-webapp-post-confirmation-trigger"
-      "{{hosted:domain}}:part-of": "{{synthesizer:name}}:{{hosted:organization}}:{{hosted:name}}:{{hosted:alias}}:webapp"
+      "{{deployment:domain}}:resource-type": role
+      "{{deployment:domain}}:category": auth
+      "{{deployment:domain}}:type": user
+      "{{deployment:domain}}:component": "{{deployment:id}}-webapp-post-confirmation-trigger"
+      "{{deployment:domain}}:part-of": "{{synthesizer:name}}:{{deployment:organization}}:{{deployment:name}}:{{deployment:alias}}:webapp"
