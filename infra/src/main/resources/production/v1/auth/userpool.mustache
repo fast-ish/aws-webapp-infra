@@ -1,4 +1,4 @@
-name: {{hosted:id}}-webapp-userpool
+name: {{deployment:id}}-webapp-userpool
 triggers: auth/triggers.mustache
 selfSignup: true
 featurePlan: plus
@@ -46,7 +46,7 @@ passwordPolicy:
   tempPasswordValidity: 1
 verification:
   emailStyle: code
-  emailSubject: "{{hosted:name}} verification"
+  emailSubject: "{{deployment:name}} verification"
   emailBody: "Please use verification code '{####}' to validate your email."
   smsMessage: "Please use verification code '{####}' to validate your phone number."
 standardAttributes:
@@ -81,8 +81,8 @@ customAttributes:
     max: 5
     mutable: true
 tags:
-  "{{hosted:domain}}:resource-type": userpool
-  "{{hosted:domain}}:category": identity
-  "{{hosted:domain}}:type": external
-  "{{hosted:domain}}:component": "{{hosted:id}}-userpool"
-  "{{hosted:domain}}:part-of": "{{synthesizer:name}}:{{hosted:organization}}:{{hosted:name}}:{{hosted:alias}}:webapp"
+  "{{deployment:domain}}:resource-type": userpool
+  "{{deployment:domain}}:category": identity
+  "{{deployment:domain}}:type": external
+  "{{deployment:domain}}:component": "{{deployment:id}}-userpool"
+  "{{deployment:domain}}:part-of": "{{synthesizer:name}}:{{deployment:organization}}:{{deployment:name}}:{{deployment:alias}}:webapp"

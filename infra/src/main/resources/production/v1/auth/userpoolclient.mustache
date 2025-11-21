@@ -1,4 +1,4 @@
-name: {{hosted:id}}-webapp-userpoolclient
+name: {{deployment:id}}-webapp-userpoolclient
 idTokenValidity: PT1H
 accessTokenValidity: PT1H
 authSessionValidity: PT5M
@@ -17,9 +17,9 @@ oauth:
     - profile
     - openid
   callbackUrls:
-    - https://{{hosted:domain}}/identified
+    - https://{{deployment:domain}}/identified
   logoutUrls:
-    - https://{{hosted:domain}}/logout
+    - https://{{deployment:domain}}/logout
 readAttributes:
   email: true
   email_verified: true
@@ -52,8 +52,8 @@ authFlow:
   userSrp: true
   custom: false
 tags:
-  "{{hosted:domain}}:resource-type": userpoolclient
-  "{{hosted:domain}}:category": identity
-  "{{hosted:domain}}:type": external
-  "{{hosted:domain}}:component": "{{hosted:id}}-userpoolclient"
-  "{{hosted:domain}}:part-of": "{{synthesizer:name}}:{{hosted:organization}}:{{hosted:name}}:{{hosted:alias}}:webapp"
+  "{{deployment:domain}}:resource-type": userpoolclient
+  "{{deployment:domain}}:category": identity
+  "{{deployment:domain}}:type": external
+  "{{deployment:domain}}:component": "{{deployment:id}}-userpoolclient"
+  "{{deployment:domain}}:part-of": "{{synthesizer:name}}:{{deployment:organization}}:{{deployment:name}}:{{deployment:alias}}:webapp"
