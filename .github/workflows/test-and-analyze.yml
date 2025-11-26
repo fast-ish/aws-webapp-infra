@@ -55,7 +55,7 @@ jobs:
         run: mvn test -B || true
 
       - name: generate test report
-        uses: dorny/test-reporter@v1
+        uses: dorny/test-reporter@v2
         if: success() || failure()
         with:
           name: maven tests
