@@ -26,17 +26,17 @@ jobs:
 
     steps:
     - name: checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
 
     - name: set up jdk 21
-      uses: actions/setup-java@v4
+      uses: actions/setup-java@v5
       with:
         java-version: '21'
         distribution: 'corretto'
         cache: maven
 
     - name: initialize CodeQL
-      uses: github/codeql-action/init@v3
+      uses: github/codeql-action/init@v4
       with:
         languages: ${{ matrix.language }}
         queries: security-and-quality
@@ -51,6 +51,6 @@ jobs:
       run: mvn clean compile -DskipTests -B
 
     - name: perform CodeQL analysis
-      uses: github/codeql-action/analyze@v3
+      uses: github/codeql-action/analyze@v4
       with:
         category: "/language:${{matrix.language}}"
