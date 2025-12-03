@@ -25,7 +25,9 @@ customMessage:
       "{{deployment:domain}}:category": auth
       "{{deployment:domain}}:type": user
       "{{deployment:domain}}:component": "{{deployment:id}}-webapp-custom-message-trigger"
-      "{{deployment:domain}}:part-of": "{{synthesizer:name}}:{{deployment:organization}}:{{deployment:name}}:{{deployment:alias}}:webapp"
+      "{{deployment:domain}}:organization": "{{deployment:organization}}"
+      "{{deployment:domain}}:name": "{{deployment:team:name}}"
+      "{{deployment:domain}}:alias": "{{deployment:team:alias}}"
 
 postConfirmation:
   name: {{deployment:id}}-webapp-post-confirmation-trigger
@@ -61,4 +63,6 @@ postConfirmation:
       "{{deployment:domain}}:category": auth
       "{{deployment:domain}}:type": user
       "{{deployment:domain}}:component": "{{deployment:id}}-webapp-post-confirmation-trigger"
-      "{{deployment:domain}}:part-of": "{{synthesizer:name}}:{{deployment:organization}}:{{deployment:name}}:{{deployment:alias}}:webapp"
+      "{{deployment:domain}}:organization": "{{deployment:organization}}"
+      "{{deployment:domain}}:name": "{{deployment:team:name}}"
+      "{{deployment:domain}}:alias": "{{deployment:team:alias}}"
