@@ -33,7 +33,9 @@ fn:
       "{{deployment:domain}}:category": api
       "{{deployment:domain}}:type": user
       "{{deployment:domain}}:component": "{{deployment:id}}-webapp-user-api-fn"
-      "{{deployment:domain}}:part-of": "{{synthesizer:name}}:{{deployment:organization}}:{{deployment:name}}:{{deployment:alias}}:webapp"
+      "{{deployment:domain}}:organization": "{{deployment:organization}}"
+      "{{deployment:domain}}:name": "{{deployment:team:name}}"
+      "{{deployment:domain}}:alias": "{{deployment:team:alias}}"
 integration:
   - path: /user/{user}
     method: post

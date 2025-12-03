@@ -86,7 +86,7 @@ All infrastructure is defined through YAML/JSON configuration files processed by
 
 ```yaml
 # resources/prototype/v1/cognito/user-pool.yaml
-name: "{{deployment:name}}"
+name: "{{deployment:team:name}}"
 passwordPolicy:
   minimumLength: 8
   requireLowercase: true
@@ -173,7 +173,7 @@ Templates use Mustache syntax with CDK context injection:
 
 ```yaml
 # Input template
-name: "{{deployment:name}}-user-pool"
+name: "{{deployment:team:name}}-user-pool"
 domain: "{{deployment:domain}}"
 
 # After processing (with context)
