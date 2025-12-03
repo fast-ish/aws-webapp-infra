@@ -40,7 +40,7 @@ public class Launch {
             conf.platform(),
             String
               .format(
-                "%s %s webapp",
+                "WebApp release [%s/%s] - Lambda and API Gateway",
                 conf.release().common().name(),
                 conf.release().common().alias())))
         .tags(Common.Maps.from(conf.platform().tags(), conf.release().common().tags()))
