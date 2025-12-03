@@ -1,5 +1,5 @@
 enabled: true
-externalId: {{deployment:name}}
+externalId: {{deployment:team:name}}
 role:
   name: {{deployment:id}}-webapp-cognito-sns
   principal:
@@ -7,7 +7,7 @@ role:
     value: cognito-idp.amazonaws.com
     conditions:
       StringEquals:
-        "sts:ExternalId": {{deployment:name}}
+        "sts:ExternalId": {{deployment:team:name}}
   managedPolicyNames:
     - AmazonSNSFullAccess
   customPolicies: [ ]
@@ -16,4 +16,6 @@ role:
     "{{deployment:domain}}:category": public
     "{{deployment:domain}}:type": sms
     "{{deployment:domain}}:component": "{{deployment:id}}-webapp-cognito-sns"
-    "{{deployment:domain}}:part-of": "{{synthesizer:name}}:{{deployment:organization}}:{{deployment:name}}:{{deployment:alias}}:webapp"
+    "{{deployment:domain}}:organization": "{{deployment:organization}}"
+    "{{deployment:domain}}:name": "{{deployment:team:name}}"
+    "{{deployment:domain}}:alias": "{{deployment:team:alias}}"

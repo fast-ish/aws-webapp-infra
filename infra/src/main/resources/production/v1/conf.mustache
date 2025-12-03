@@ -1,33 +1,23 @@
 platform:
-  common:
-    id: {{platform:id}}
-    organization: {{platform:organization}}
-    account: {{platform:account}}
-    region: {{platform:region}}
-    name: {{platform:name}}
-    alias: {{platform:alias}}
-    environment: {{platform:environment}}
-    version: {{platform:version}}
-    domain: {{platform:domain}}
-    tags:
-      "{{platform:domain}}:billing": {{platform:organization}}
-      "{{platform:domain}}:managed-by": {{platform:organization}}
-      "{{platform:domain}}:account": {{platform:account}}
-      "{{platform:domain}}:region": {{platform:region}}
-      "{{platform:domain}}:name": {{platform:name}}
-      "{{platform:domain}}:type": {{platform:alias}}
-      "{{platform:domain}}:environment": {{platform:environment}}
-      "{{platform:domain}}:version": {{platform:version}}
-      "{{platform:domain}}:part-of": "{{platform:organization}}:{{platform:account}}:{{platform:name}}:{{platform:alias}}"
+  id: {{platform:id}}
+  organization: {{platform:organization}}
+  account: {{platform:account}}
+  region: {{platform:region}}
+  name: {{platform:name}}
+  alias: {{platform:alias}}
+  environment: {{platform:environment}}
+  version: {{platform:version}}
+  domain: {{platform:domain}}
+  tags: {}
 
-deployment:
+release:
   common:
     id: {{deployment:id}}
     organization: {{deployment:organization}}
     account: {{deployment:account}}
     region: {{deployment:region}}
-    name: {{deployment:name}}
-    alias: {{deployment:alias}}
+    name: {{deployment:team:name}}
+    alias: {{deployment:team:alias}}
     environment: {{deployment:environment}}
     version: {{deployment:version}}
     domain: {{deployment:domain}}
@@ -36,11 +26,8 @@ deployment:
       "{{deployment:domain}}:managed-by": {{deployment:organization}}
       "{{deployment:domain}}:account": {{deployment:account}}
       "{{deployment:domain}}:region": {{deployment:region}}
-      "{{deployment:domain}}:name": {{deployment:name}}
-      "{{deployment:domain}}:alias": {{deployment:alias}}
-      "{{deployment:domain}}:environment": {{deployment:environment}}
-      "{{deployment:domain}}:version": {{deployment:version}}
-      "{{deployment:domain}}:part-of": "{{synthesizer:name}}:{{deployment:organization}}:{{deployment:name}}:{{deployment:alias}}:webapp"
+      "{{deployment:domain}}:name": {{deployment:team:name}}
+      "{{deployment:domain}}:alias": {{deployment:team:alias}}
 
   vpc:
     name: {{deployment:id}}-webapp-vpc
@@ -68,7 +55,9 @@ deployment:
           "{{deployment:domain}}:type": public
           "{{deployment:domain}}:cidrMask": 24
           "{{deployment:domain}}:component": {{deployment:id}}-webapp-vpc-subnet
-          "{{deployment:domain}}:part-of": "{{synthesizer:name}}:{{deployment:organization}}:{{deployment:name}}:{{deployment:alias}}:webapp"
+          "{{deployment:domain}}:organization": "{{deployment:organization}}"
+          "{{deployment:domain}}:name": "{{deployment:team:name}}"
+          "{{deployment:domain}}:alias": "{{deployment:team:alias}}"
       - name: private
         cidrMask: 24
         reserved: false
@@ -79,14 +68,18 @@ deployment:
           "{{deployment:domain}}:type": private_with_egress
           "{{deployment:domain}}:cidrMask": 24
           "{{deployment:domain}}:component": {{deployment:id}}-webapp-vpc-subnet
-          "{{deployment:domain}}:part-of": "{{synthesizer:name}}:{{deployment:organization}}:{{deployment:name}}:{{deployment:alias}}:webapp"
+          "{{deployment:domain}}:organization": "{{deployment:organization}}"
+          "{{deployment:domain}}:name": "{{deployment:team:name}}"
+          "{{deployment:domain}}:alias": "{{deployment:team:alias}}"
     tags:
       "{{deployment:domain}}:resource-type": vpc
       "{{deployment:domain}}:category": network
       "{{deployment:domain}}:type": network
       "{{deployment:domain}}:cidrMask": 24
       "{{deployment:domain}}:component": {{deployment:id}}-webapp-vpc
-      "{{deployment:domain}}:part-of": "{{synthesizer:name}}:{{deployment:organization}}:{{deployment:name}}:{{deployment:alias}}:webapp"
+      "{{deployment:domain}}:organization": "{{deployment:organization}}"
+      "{{deployment:domain}}:name": "{{deployment:team:name}}"
+      "{{deployment:domain}}:alias": "{{deployment:team:alias}}"
 
   ses:
     identity:
@@ -136,7 +129,9 @@ deployment:
           "{{deployment:domain}}:category": ses
           "{{deployment:domain}}:type": received
           "{{deployment:domain}}:component": {{deployment:id}}-webapp-ses
-          "{{deployment:domain}}:part-of": "{{synthesizer:name}}:{{deployment:organization}}:{{deployment:name}}:{{deployment:alias}}:webapp"
+          "{{deployment:domain}}:organization": "{{deployment:organization}}"
+          "{{deployment:domain}}:name": "{{deployment:team:name}}"
+          "{{deployment:domain}}:alias": "{{deployment:team:alias}}"
       rules:
         - name: email-receipt
           enabled: true
@@ -235,5 +230,7 @@ deployment:
         "{{deployment:domain}}:category": api
         "{{deployment:domain}}:type": public
         "{{deployment:domain}}:component": {{deployment:id}}-webapp-api
-        "{{deployment:domain}}:part-of": "{{synthesizer:name}}:{{deployment:organization}}:{{deployment:name}}:{{deployment:alias}}:webapp"
+        "{{deployment:domain}}:organization": "{{deployment:organization}}"
+        "{{deployment:domain}}:name": "{{deployment:team:name}}"
+        "{{deployment:domain}}:alias": "{{deployment:team:alias}}"
     resource: api/user.mustache

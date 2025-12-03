@@ -46,7 +46,7 @@ passwordPolicy:
   tempPasswordValidity: 1
 verification:
   emailStyle: code
-  emailSubject: "{{deployment:name}} verification"
+  emailSubject: "{{deployment:team:name}} verification"
   emailBody: "Please use verification code '{####}' to validate your email."
   smsMessage: "Please use verification code '{####}' to validate your phone number."
 standardAttributes:
@@ -85,4 +85,6 @@ tags:
   "{{deployment:domain}}:category": identity
   "{{deployment:domain}}:type": external
   "{{deployment:domain}}:component": "{{deployment:id}}-userpool"
-  "{{deployment:domain}}:part-of": "{{synthesizer:name}}:{{deployment:organization}}:{{deployment:name}}:{{deployment:alias}}:webapp"
+  "{{deployment:domain}}:organization": "{{deployment:organization}}"
+  "{{deployment:domain}}:name": "{{deployment:team:name}}"
+  "{{deployment:domain}}:alias": "{{deployment:team:alias}}"
