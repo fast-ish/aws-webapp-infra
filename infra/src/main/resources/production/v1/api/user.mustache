@@ -4,7 +4,7 @@ fn:
   handler: ui.webapp.Handler
   subnetType: private_with_egress
   timeout: 60
-  memorySize: 256
+  memorySize: 512
   runtime: java21
   environment:
     DYNAMODB_USER_TABLE: {{deployment:id}}-webapp-db-user

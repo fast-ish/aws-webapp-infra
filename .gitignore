@@ -15,3 +15,4 @@ cdk/out/
 cdk.context.json
 
 **/deleteme*
+scripts/smoke-test/webapp-smoke-test

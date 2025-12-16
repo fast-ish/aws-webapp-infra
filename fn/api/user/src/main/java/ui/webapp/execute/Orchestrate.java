@@ -13,7 +13,6 @@ import ui.webapp.model.request.UpdateUserRequest;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-import static io.netty.handler.codec.http.HttpMethod.*;
 import static ui.webapp.JsonUtil.fromJson;
 import static ui.webapp.JsonUtil.toJson;
 
@@ -37,7 +36,7 @@ public class Orchestrate {
 
     var headers = Map.of("Content-Type", "application/json");
 
-    if (request.getHttpMethod().equals(GET.name()) && request.getResource().equals(READ_USER)) {
+    if (request.getHttpMethod().equals("GET") && request.getResource().equals(READ_USER)) {
       log.info("get user {}", request);
 
       return userClient.get(userId)
@@ -55,7 +54,7 @@ public class Orchestrate {
             .withStatusCode(400)
             .withHeaders(headers);
         });
-    } else if (request.getHttpMethod().equals(PUT.name()) && request.getResource().equals(UPDATE_USER)) {
+    } else if (request.getHttpMethod().equals("PUT") && request.getResource().equals(UPDATE_USER)) {
       log.info("put user {} ", request);
 
       var b = fromJson(mapper, request.getBody(), UpdateUserRequest.class);
@@ -74,7 +73,7 @@ public class Orchestrate {
             .withStatusCode(400)
             .withHeaders(headers);
         });
-    } else if (request.getHttpMethod().equals(DELETE.name()) && request.getResource().equals(DELETE_USER)) {
+    } else if (request.getHttpMethod().equals("DELETE") && request.getResource().equals(DELETE_USER)) {
       log.info("delete user {}", request);
 
       return userClient.unsubscribe(userId)

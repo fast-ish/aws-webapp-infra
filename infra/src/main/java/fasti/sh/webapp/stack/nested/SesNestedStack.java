@@ -10,7 +10,6 @@ import fasti.sh.webapp.stack.model.SesConf;
 import java.util.List;
 import java.util.stream.Stream;
 import lombok.Getter;
-import lombok.SneakyThrows;
 import software.amazon.awscdk.CfnOutput;
 import software.amazon.awscdk.NestedStack;
 import software.amazon.awscdk.NestedStackProps;
@@ -36,7 +35,6 @@ public class SesNestedStack extends NestedStack {
   private final ConfigurationSetEventDestination rejectDestination;
   private final ConfigurationSetEventDestination complaintDestination;
 
-  @SneakyThrows
   public SesNestedStack(Construct scope, Common common, SesConf conf, NestedStackProps props) {
     super(scope, "webapp.ses", props);
 
@@ -91,35 +89,47 @@ public class SesNestedStack extends NestedStack {
     var s3Actions = rule
       .s3Actions()
       .stream()
-      .map(
-        action -> S3.Builder
+      .map(action -> {
+        var topic = Topic.Builder.create(this, action.topic())
+          .topicName(action.topic())
+          .build();
+        return S3.Builder
           .create()
           .bucket(bucket)
           .objectKeyPrefix(action.prefix())
-          .topic(new Topic(this, action.topic()))
-          .build())
+          .topic(topic)
+          .build();
+      })
       .toList();
 
     var lambdaActions = rule
       .lambdaActions()
       .stream()
-      .map(
-        action -> Lambda.Builder
+      .map(action -> {
+        var topic = Topic.Builder.create(this, action.topic())
+          .topicName(action.topic())
+          .build();
+        return Lambda.Builder
           .create()
-          .topic(new Topic(this, action.topic()))
+          .topic(topic)
           .function(null)
           .invocationType(LambdaInvocationType.valueOf(action.invocationType()))
-          .build())
+          .build();
+      })
       .toList();
 
     var snsActions = rule
       .snsActions()
       .stream()
-      .map(
-        action -> Sns.Builder
+      .map(action -> {
+        var topic = Topic.Builder.create(this, action.topic())
+          .topicName(action.topic())
+          .build();
+        return Sns.Builder
           .create()
-          .topic(new Topic(this, action.topic()))
-          .build())
+          .topic(topic)
+          .build();
+      })
       .toList();
 
     return Stream
@@ -129,6 +139,9 @@ public class SesNestedStack extends NestedStack {
   }
 
   private ConfigurationSetEventDestination bounceDestination(Common common, SesConf conf) {
+    var topic = Topic.Builder.create(this, conf.destination().bounce().topic())
+      .topicName(conf.destination().bounce().topic())
+      .build();
     return this
       .identity()
       .configurationSet()
@@ -137,13 +150,16 @@ public class SesNestedStack extends NestedStack {
         ConfigurationSetEventDestinationOptions
           .builder()
           .enabled(conf.destination().bounce().enabled())
-          .destination(EventDestination.snsTopic(new Topic(this, conf.destination().bounce().topic())))
+          .destination(EventDestination.snsTopic(topic))
           .configurationSetEventDestinationName(conf.destination().bounce().topic())
           .events(List.of(EmailSendingEvent.BOUNCE))
           .build());
   }
 
   private ConfigurationSetEventDestination rejectDestination(Common common, SesConf conf) {
+    var topic = Topic.Builder.create(this, conf.destination().reject().topic())
+      .topicName(conf.destination().reject().topic())
+      .build();
     return this
       .identity()
       .configurationSet()
@@ -152,13 +168,16 @@ public class SesNestedStack extends NestedStack {
         ConfigurationSetEventDestinationOptions
           .builder()
           .enabled(conf.destination().reject().enabled())
-          .destination(EventDestination.snsTopic(new Topic(this, conf.destination().reject().topic())))
+          .destination(EventDestination.snsTopic(topic))
           .configurationSetEventDestinationName(conf.destination().reject().topic())
           .events(List.of(EmailSendingEvent.REJECT))
           .build());
   }
 
   private ConfigurationSetEventDestination complaintDestination(Common common, SesConf conf) {
+    var topic = Topic.Builder.create(this, conf.destination().complaint().topic())
+      .topicName(conf.destination().complaint().topic())
+      .build();
     return this
       .identity()
       .configurationSet()
@@ -167,7 +186,7 @@ public class SesNestedStack extends NestedStack {
         ConfigurationSetEventDestinationOptions
           .builder()
           .enabled(conf.destination().complaint().enabled())
-          .destination(EventDestination.snsTopic(new Topic(this, conf.destination().complaint().topic())))
+          .destination(EventDestination.snsTopic(topic))
           .configurationSetEventDestinationName(conf.destination().complaint().topic())
           .events(List.of(EmailSendingEvent.COMPLAINT))
           .build());

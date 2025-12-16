@@ -7,13 +7,15 @@ import software.amazon.awssdk.services.cognitoidentityprovider.CognitoIdentityPr
 
 public class AuthDependencyFactory {
 
+  private static final CognitoIdentityProviderAsyncClient COGNITO_CLIENT = CognitoIdentityProviderAsyncClient.builder()
+    .credentialsProvider(EnvironmentVariableCredentialsProvider.create())
+    .region(Region.of(System.getenv("AWS_DEFAULT_REGION").toLowerCase()))
+    .httpClientBuilder(AwsCrtAsyncHttpClient.builder())
+    .build();
+
   private AuthDependencyFactory() {}
 
   public static CognitoIdentityProviderAsyncClient cognitoIdentityProviderClient() {
-    return CognitoIdentityProviderAsyncClient.builder()
-      .credentialsProvider(EnvironmentVariableCredentialsProvider.create())
-      .region(Region.of(System.getenv("AWS_DEFAULT_REGION").toLowerCase()))
-      .httpClientBuilder(AwsCrtAsyncHttpClient.builder())
-      .build();
+    return COGNITO_CLIENT;
   }
 }

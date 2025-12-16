@@ -8,6 +8,15 @@ import software.amazon.awssdk.services.cognitoidentityprovider.CognitoIdentityPr
 import software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient;
 
 public class DependencyFactory {
+
+  private static final CognitoIdentityProviderAsyncClient COGNITO_CLIENT = CognitoIdentityProviderAsyncClient.builder()
+    .credentialsProvider(EnvironmentVariableCredentialsProvider.create())
+    .region(Region.of(System.getenv("AWS_DEFAULT_REGION")))
+    .httpClientBuilder(AwsCrtAsyncHttpClient.builder())
+    .build();
+
+  private DependencyFactory() {}
+
   public static ObjectMapper objectMapper() {
     return SharedDependencyFactory.objectMapper();
   }
@@ -17,10 +26,6 @@ public class DependencyFactory {
   }
 
   public static CognitoIdentityProviderAsyncClient cognitoIdentityClient() {
-    return CognitoIdentityProviderAsyncClient.builder()
-      .credentialsProvider(EnvironmentVariableCredentialsProvider.create())
-      .region(Region.of(System.getenv("AWS_DEFAULT_REGION")))
-      .httpClientBuilder(AwsCrtAsyncHttpClient.builder())
-      .build();
+    return COGNITO_CLIENT;
   }
 }

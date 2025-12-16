@@ -54,7 +54,7 @@ public class ApiNestedStack extends NestedStack {
       .layerVersionName(conf.apigw().baseLayer().name())
       .code(Code.fromAsset(conf.apigw().baseLayer().asset()))
       .removalPolicy(conf.apigw().baseLayer().removalPolicy())
-      .compatibleArchitectures(List.of(Architecture.X86_64))
+      .compatibleArchitectures(List.of(Architecture.ARM_64))
       .compatibleRuntimes(
         conf
           .apigw()
