@@ -9,18 +9,21 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient;
 
 public class SharedDependencyFactory {
 
+  private static final ObjectMapper OBJECT_MAPPER = JsonMapper.builder().build();
+
+  private static final DynamoDbAsyncClient DYNAMODB_CLIENT = DynamoDbAsyncClient.builder()
+    .credentialsProvider(EnvironmentVariableCredentialsProvider.create())
+    .region(Region.of(System.getenv("AWS_DEFAULT_REGION")))
+    .httpClientBuilder(AwsCrtAsyncHttpClient.builder())
+    .build();
+
   private SharedDependencyFactory() {}
 
   public static ObjectMapper objectMapper() {
-    return JsonMapper.builder()
-      .build();
+    return OBJECT_MAPPER;
   }
 
   public static DynamoDbAsyncClient dynamoDbAsyncClient() {
-    return DynamoDbAsyncClient.builder()
-      .credentialsProvider(EnvironmentVariableCredentialsProvider.create())
-      .region(Region.of(System.getenv("AWS_DEFAULT_REGION")))
-      .httpClientBuilder(AwsCrtAsyncHttpClient.builder())
-      .build();
+    return DYNAMODB_CLIENT;
   }
 }

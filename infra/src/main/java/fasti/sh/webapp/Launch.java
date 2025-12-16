@@ -4,21 +4,18 @@ import static fasti.sh.execute.serialization.Format.describe;
 import static fasti.sh.execute.serialization.Format.name;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import fasti.sh.execute.serialization.Mapper;
-import fasti.sh.execute.serialization.Template;
+import fasti.sh.execute.util.TemplateUtils;
 import fasti.sh.model.main.Common;
 import fasti.sh.model.main.Release;
 import fasti.sh.webapp.stack.WebappReleaseConf;
 import fasti.sh.webapp.stack.WebappStack;
 import java.util.Map;
-import lombok.SneakyThrows;
 import software.amazon.awscdk.App;
 import software.amazon.awscdk.Environment;
 import software.amazon.awscdk.StackProps;
 
 public class Launch {
 
-  @SneakyThrows
   public static void main(String[] args) {
     var app = new App();
 
@@ -49,17 +46,11 @@ public class Launch {
     app.synth();
   }
 
-  @SneakyThrows
   private static Release<WebappReleaseConf> get(App app) {
-    var parsed = Template
-      .parse(
-        app,
-        "conf.mustache",
-        Map.ofEntries(
-            Map.entry("deployment:ses:hosted:zone", app.getNode().getContext("deployment:ses:hosted:zone")),
-            Map.entry("deployment:ses:email", app.getNode().getContext("deployment:ses:email"))));
-
+    var mappings = Map.<String, Object>ofEntries(
+        Map.entry("deployment:ses:hosted:zone", app.getNode().getContext("deployment:ses:hosted:zone")),
+        Map.entry("deployment:ses:email", app.getNode().getContext("deployment:ses:email")));
     var type = new TypeReference<Release<WebappReleaseConf>>() {};
-    return Mapper.get().readValue(parsed, type);
+    return TemplateUtils.parseAs(app, "conf.mustache", mappings, type);
   }
 }
