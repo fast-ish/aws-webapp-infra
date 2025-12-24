@@ -75,6 +75,15 @@ deploy: ## Deploy to Maven repository
 release: ## Create a release
 	mvn release:prepare release:perform
 
+.PHONY: validate
+validate: ## Validate CDK templates with cfn-lint
+	@if [ -f scripts/validate-templates.sh ]; then \
+		scripts/validate-templates.sh; \
+	else \
+		echo "Error: scripts/validate-templates.sh not found"; \
+		exit 1; \
+	fi
+
 .PHONY: update-deps
 update-deps: ## Update Maven dependencies
 	mvn versions:use-latest-versions

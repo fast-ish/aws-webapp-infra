@@ -1,5 +1,5 @@
 {
-  "app": "mvn -e -q compile exec:java -Dexec.mainClass=fasti.sh.webapp.Launch",
+  "app": "mvn -e -q compile exec:java -pl infra -Dexec.mainClass=fasti.sh.webapp.Launch",
   "watch": {
     "include": [
       "**"
