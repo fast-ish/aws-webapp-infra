@@ -17,36 +17,60 @@ permissions:
   issues: write
 
 jobs:
-  build-and-test:
-    name: build and test
+  build-cdk-common:
+    name: Build CDK Common Dependencies
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout CDK Common
+        uses: actions/checkout@v4
+        with:
+          repository: fast-ish/cdk-common
+          path: cdk-common
+          ref: main
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'corretto'
+          cache: maven
+
+      - name: Build and install cdk-common
+        run: |
+          cd cdk-common
+          mvn clean install -DskipTests -B
+
+      - name: Upload cdk-common artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: cdk-common-build
+          path: ~/.m2/repository/fastish/cdk-common/
+          retention-days: 1
+
+  build-and-test:
+    name: build and test
+    runs-on: ubuntu-latest
+    needs: build-cdk-common
+
+    steps:
       - name: checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0  # Shallow clones should be disabled for better analysis
 
       - name: set up jdk ${{ env.JAVA_VERSION }}
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v4
         with:
           java-version: ${{ env.JAVA_VERSION }}
           distribution: ${{ env.JAVA_DISTRIBUTION }}
           cache: maven
 
-      - name: cache maven dependencies
-        uses: actions/cache@v4
+      - name: Download cdk-common artifacts
+        uses: actions/download-artifact@v4
         with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
-
-      - name: build cdk-common dependency
-        run: |
-          git clone https://github.com/fast-ish/cdk-common.git /tmp/cdk-common
-          cd /tmp/cdk-common
-          mvn clean install -DskipTests -B
+          name: cdk-common-build
+          path: ~/.m2/repository/
 
       - name: compile project
         run: mvn clean compile -B
@@ -74,25 +98,26 @@ jobs:
   code-coverage:
     name: code coverage analysis
     runs-on: ubuntu-latest
+    needs: build-cdk-common
 
     steps:
       - name: checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: set up jdk ${{ env.JAVA_VERSION }}
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v4
         with:
           java-version: ${{ env.JAVA_VERSION }}
           distribution: ${{ env.JAVA_DISTRIBUTION }}
           cache: maven
 
-      - name: build cdk-common dependency
-        run: |
-          git clone https://github.com/fast-ish/cdk-common.git /tmp/cdk-common
-          cd /tmp/cdk-common
-          mvn clean install -DskipTests -B
+      - name: Download cdk-common artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: cdk-common-build
+          path: ~/.m2/repository/
 
       - name: run tests with JaCoCo coverage
         run: mvn clean test jacoco:report -B || true
@@ -140,23 +165,24 @@ jobs:
   spotbugs-analysis:
     name: spotbugs static analysis
     runs-on: ubuntu-latest
+    needs: build-cdk-common
 
     steps:
       - name: checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: set up jdk ${{ env.JAVA_VERSION }}
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v4
         with:
           java-version: ${{ env.JAVA_VERSION }}
           distribution: ${{ env.JAVA_DISTRIBUTION }}
           cache: maven
 
-      - name: build cdk-common dependency
-        run: |
-          git clone https://github.com/fast-ish/cdk-common.git /tmp/cdk-common
-          cd /tmp/cdk-common
-          mvn clean install -DskipTests -B
+      - name: Download cdk-common artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: cdk-common-build
+          path: ~/.m2/repository/
 
       - name: run spotbugs analysis
         run: |
@@ -181,23 +207,24 @@ jobs:
   pmd-analysis:
     name: pmd static analysis
     runs-on: ubuntu-latest
+    needs: build-cdk-common
 
     steps:
       - name: checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: set up jdk ${{ env.JAVA_VERSION }}
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v4
         with:
           java-version: ${{ env.JAVA_VERSION }}
           distribution: ${{ env.JAVA_DISTRIBUTION }}
           cache: maven
 
-      - name: build cdk-common dependency
-        run: |
-          git clone https://github.com/fast-ish/cdk-common.git /tmp/cdk-common
-          cd /tmp/cdk-common
-          mvn clean install -DskipTests -B
+      - name: Download cdk-common artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: cdk-common-build
+          path: ~/.m2/repository/
 
       - name: run pmd analysis
         run: |
@@ -225,23 +252,24 @@ jobs:
   checkstyle-analysis:
     name: checkstyle analysis
     runs-on: ubuntu-latest
+    needs: build-cdk-common
 
     steps:
       - name: checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: set up jdk ${{ env.JAVA_VERSION }}
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v4
         with:
           java-version: ${{ env.JAVA_VERSION }}
           distribution: ${{ env.JAVA_DISTRIBUTION }}
           cache: maven
 
-      - name: build cdk-common dependency
-        run: |
-          git clone https://github.com/fast-ish/cdk-common.git /tmp/cdk-common
-          cd /tmp/cdk-common
-          mvn clean install -DskipTests -B
+      - name: Download cdk-common artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: cdk-common-build
+          path: ~/.m2/repository/
 
       - name: run checkstyle
         run: mvn clean checkstyle:checkstyle -B || true
@@ -268,10 +296,10 @@ jobs:
 
     steps:
       - name: checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: set up jdk ${{ env.JAVA_VERSION }}
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v4
         with:
           java-version: ${{ env.JAVA_VERSION }}
           distribution: ${{ env.JAVA_DISTRIBUTION }}
@@ -299,23 +327,24 @@ jobs:
   dependency-analysis:
     name: maven dependency analysis
     runs-on: ubuntu-latest
+    needs: build-cdk-common
 
     steps:
       - name: checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: set up jdk ${{ env.JAVA_VERSION }}
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v4
         with:
           java-version: ${{ env.JAVA_VERSION }}
           distribution: ${{ env.JAVA_DISTRIBUTION }}
           cache: maven
 
-      - name: build cdk-common dependency
-        run: |
-          git clone https://github.com/fast-ish/cdk-common.git /tmp/cdk-common
-          cd /tmp/cdk-common
-          mvn clean install -DskipTests -B
+      - name: Download cdk-common artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: cdk-common-build
+          path: ~/.m2/repository/
 
       - name: analyze dependencies
         run: |
