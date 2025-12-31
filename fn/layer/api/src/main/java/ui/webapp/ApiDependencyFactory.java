@@ -14,15 +14,15 @@ public class ApiDependencyFactory {
   public static List<String> profanity() {
     final ArrayList<String> p;
 
-    try (var inputStream = ApiDependencyFactory.class.getClassLoader().getResourceAsStream("profanity/en.txt")) {
-      var reader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(inputStream)));
+    try (var inputStream = ApiDependencyFactory.class.getClassLoader().getResourceAsStream("profanity/en.txt");
+         var reader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(inputStream)))) {
       p = new ArrayList<>(reader.lines().toList());
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
 
-    try (var inputStream = ApiDependencyFactory.class.getClassLoader().getResourceAsStream("profanity/es.txt")) {
-      var reader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(inputStream)));
+    try (var inputStream = ApiDependencyFactory.class.getClassLoader().getResourceAsStream("profanity/es.txt");
+         var reader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(inputStream)))) {
       p.addAll(reader.lines().toList());
     } catch (IOException e) {
       throw new RuntimeException(e);

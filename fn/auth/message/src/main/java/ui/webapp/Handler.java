@@ -10,6 +10,7 @@ import ui.webapp.response.UpdateUserAttributeResponse;
 import ui.webapp.response.VerifyUserAttributeResponse;
 
 public class Handler implements RequestHandler<CognitoMessageEvent, CognitoMessageEvent> {
+  @Override
   public CognitoMessageEvent handleRequest(CognitoMessageEvent event, Context context) {
     if (event.triggerSource().equals(TriggerSource.CustomMessage_SignUp.name())) {
       context.getLogger().log("custom message signup");

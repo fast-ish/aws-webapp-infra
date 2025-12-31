@@ -40,9 +40,9 @@ public class SesNestedStack extends NestedStack {
 
     this.identity = new IdentityConstruct(this, common, conf.identity());
     this.receiptRuleSet = receiptRuleSet(common, conf);
-    this.bounceDestination = bounceDestination(common, conf);
-    this.rejectDestination = rejectDestination(common, conf);
-    this.complaintDestination = complaintDestination(common, conf);
+    this.bounceDestination = bounceDestination(conf);
+    this.rejectDestination = rejectDestination(conf);
+    this.complaintDestination = complaintDestination(conf);
 
     CfnOutput.Builder
       .create(this, id(common.id(), "ses.identity.arn"))
@@ -138,7 +138,7 @@ public class SesNestedStack extends NestedStack {
       .toList();
   }
 
-  private ConfigurationSetEventDestination bounceDestination(Common common, SesConf conf) {
+  private ConfigurationSetEventDestination bounceDestination(SesConf conf) {
     var topic = Topic.Builder.create(this, conf.destination().bounce().topic())
       .topicName(conf.destination().bounce().topic())
       .build();
@@ -156,7 +156,7 @@ public class SesNestedStack extends NestedStack {
           .build());
   }
 
-  private ConfigurationSetEventDestination rejectDestination(Common common, SesConf conf) {
+  private ConfigurationSetEventDestination rejectDestination(SesConf conf) {
     var topic = Topic.Builder.create(this, conf.destination().reject().topic())
       .topicName(conf.destination().reject().topic())
       .build();
@@ -174,7 +174,7 @@ public class SesNestedStack extends NestedStack {
           .build());
   }
 
-  private ConfigurationSetEventDestination complaintDestination(Common common, SesConf conf) {
+  private ConfigurationSetEventDestination complaintDestination(SesConf conf) {
     var topic = Topic.Builder.create(this, conf.destination().complaint().topic())
       .topicName(conf.destination().complaint().topic())
       .build();

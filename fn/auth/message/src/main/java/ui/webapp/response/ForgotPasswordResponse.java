@@ -28,9 +28,7 @@ public class ForgotPasswordResponse {
   }
 
   public ForgotPasswordResponse(CognitoMessageEvent event) {
-    var username = event.request().userAttributes().getOrDefault("preferred_username", event.request().userAttributes().get("email"));
-    var formattedEmailMessage = String.format(emailMessage, username);
-    var response = new MessageResponse(emailSubject, formattedEmailMessage, smsMessage);
+    var response = new MessageResponse(emailSubject, emailMessage, smsMessage);
     this.event = CognitoMessageEvent.from(event, response);
   }
 
