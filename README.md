@@ -277,9 +277,9 @@ flowchart TB
         REST[REST API]
 
         subgraph "Resources"
-            R1[/users]
-            R2[/orders]
-            R3[/products]
+            R1["/users"]
+            R2["/orders"]
+            R3["/products"]
         end
 
         subgraph "Methods"
