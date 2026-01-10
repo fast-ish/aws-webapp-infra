@@ -71,7 +71,7 @@ git remote add upstream https://github.com/fast-ish/aws-webapp-infra.git
 ### Java Style Guide
 
 - Use 2 spaces for indentation
-- Maximum line length: 120 characters
+- Maximum line length: 140 characters
 - Use meaningful variable and method names
 - Add JavaDoc comments for public methods and classes
 - Follow standard Java naming conventions
