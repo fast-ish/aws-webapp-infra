@@ -1,0 +1,149 @@
+# Makefile for aws-webapp-infra with Rust Lambda functions
+# Based on stackset-infra Makefile pattern
+
+.PHONY: help
+help:
+	@echo "Available targets:"
+	@echo "  rust-install   - Install Rust toolchain and cargo-lambda"
+	@echo "  rust-build     - Build all Rust Lambda functions"
+	@echo "  rust-test      - Run Rust tests"
+	@echo "  rust-lint      - Run Rust linter (clippy)"
+	@echo "  rust-fmt       - Format Rust code"
+	@echo "  rust-clean     - Clean Rust build artifacts"
+	@echo "  synth          - Build Rust + CDK synth"
+	@echo "  deploy         - Deploy all stacks"
+	@echo "  deploy-dev     - Deploy to dev environment"
+	@echo "  deploy-prod    - Deploy to prod environment"
+
+.PHONY: rust-install
+rust-install:
+	@echo "Installing Rust toolchain and cargo-lambda..."
+	@command -v rustc >/dev/null 2>&1 || curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+	@. "$(HOME)/.cargo/env" && rustup target add aarch64-unknown-linux-gnu
+	@command -v cargo-lambda >/dev/null 2>&1 || pip install cargo-lambda
+	@echo "✓ Rust toolchain ready"
+
+.PHONY: rust-build
+rust-build:
+	@echo "Building all Rust Lambda functions..."
+	cd fn-rust && cargo lambda build --release --arm64 --output-format zip --workspace
+	@echo "✓ Rust Lambdas built successfully"
+	@echo "Output: fn-rust/target/lambda/*/bootstrap.zip"
+	@echo ""
+	@echo "Binary sizes:"
+	@find fn-rust/target/lambda -name "bootstrap.zip" -exec ls -lh {} \;
+
+.PHONY: rust-build-debug
+rust-build-debug:
+	@echo "Building Rust Lambda functions (debug mode)..."
+	cd fn-rust && cargo lambda build --arm64 --output-format zip --workspace
+	@echo "✓ Debug build complete"
+
+.PHONY: rust-test
+rust-test:
+	@echo "Running Rust tests..."
+	cd fn-rust && cargo test --workspace --verbose
+	@echo "✓ All Rust tests passed"
+
+.PHONY: rust-lint
+rust-lint:
+	@echo "Running Rust linter (clippy)..."
+	cd fn-rust && cargo clippy --workspace -- -D warnings
+	@echo "✓ No lint warnings"
+
+.PHONY: rust-fmt
+rust-fmt:
+	@echo "Formatting Rust code..."
+	cd fn-rust && cargo fmt --all
+	@echo "✓ Code formatted"
+
+.PHONY: rust-fmt-check
+rust-fmt-check:
+	@echo "Checking Rust code formatting..."
+	cd fn-rust && cargo fmt --all -- --check
+	@echo "✓ Code is properly formatted"
+
+.PHONY: rust-audit
+rust-audit:
+	@echo "Auditing Rust dependencies for security vulnerabilities..."
+	@command -v cargo-audit >/dev/null 2>&1 || cargo install cargo-audit
+	cd fn-rust && cargo audit
+	@echo "✓ No security vulnerabilities found"
+
+.PHONY: rust-clean
+rust-clean:
+	@echo "Cleaning Rust build artifacts..."
+	cd fn-rust && cargo clean
+	rm -rf fn-rust/target/lambda
+	@echo "✓ Build artifacts removed"
+
+.PHONY: rust-doc
+rust-doc:
+	@echo "Generating Rust documentation..."
+	cd fn-rust && cargo doc --no-deps --workspace
+	@echo "✓ Documentation generated at fn-rust/target/doc/"
+
+# CDK targets
+.PHONY: synth
+synth: rust-test rust-build
+	@echo "Building CDK stacks..."
+	mvn exec:java -Dexec.mainClass="fasti.sh.webapp.Launch"
+
+.PHONY: deploy
+deploy: synth
+	@echo "Deploying stacks..."
+	cdk deploy --all
+
+.PHONY: deploy-dev
+deploy-dev: rust-test rust-build
+	@echo "Deploying to dev environment..."
+	cdk deploy --all --context environment=dev
+
+.PHONY: deploy-prod
+deploy-prod: rust-lint rust-audit rust-test rust-build
+	@echo "Deploying to production environment..."
+	@echo "⚠️  This will deploy to PRODUCTION. Continue? [y/N]"
+	@read confirm && [ "$$confirm" = "y" ]
+	cdk deploy --all --context environment=prod --require-approval never
+
+# Quality checks
+.PHONY: check-all
+check-all: rust-fmt-check rust-lint rust-test rust-audit
+	@echo "✅ All quality checks passed!"
+
+# Local testing with cargo-lambda invoke
+.PHONY: rust-invoke-user
+rust-invoke-user:
+	@echo "Invoking user lambda locally..."
+	cd fn-rust && cargo lambda invoke \
+		--data-file lambdas/user/test-events/user.json \
+		user
+
+.PHONY: rust-invoke-message
+rust-invoke-message:
+	@echo "Invoking message lambda locally..."
+	cd fn-rust && cargo lambda invoke \
+		--data-file lambdas/message/test-events/message.json \
+		message
+
+.PHONY: rust-invoke-post-confirmation
+rust-invoke-post-confirmation:
+	@echo "Invoking post-confirmation lambda locally..."
+	cd fn-rust && cargo lambda invoke \
+		--data-file lambdas/post-confirmation/test-events/post-confirmation.json \
+		post-confirmation
+
+# CI/CD target
+.PHONY: ci
+ci: rust-install check-all rust-build
+	@echo "✅ CI checks complete"
+
+# Integration with existing Makefile
+.PHONY: java-build
+java-build:
+	@echo "Building Java functions (legacy)..."
+	mvn clean package -DskipTests
+
+.PHONY: all
+all: rust-build java-build
+	@echo "✓ All functions built"

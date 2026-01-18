@@ -6,12 +6,13 @@ base:
 
 customMessage:
   name: {{deployment:id}}-webapp-message-trigger
-  asset: "/root/.m2/repository/ui/webapp/fn/auth.fn.message/1.0.0-SNAPSHOT/auth.fn.message-1.0.0-SNAPSHOT.jar"
-  handler: ui.webapp.Handler
+  asset: "fn-rust/target/lambda/message/bootstrap.zip"
+  handler: bootstrap
   subnetType: private_with_egress
   timeout: 60
-  memorySize: 512
-  runtime: java21
+  memorySize: 256
+  runtime: provided.al2023
+  architecture: ARM_64
   role:
     name: {{deployment:id}}-webapp-message-trigger-access
     principal:
@@ -31,12 +32,13 @@ customMessage:
 
 postConfirmation:
   name: {{deployment:id}}-webapp-post-confirmation-trigger
-  asset: "/root/.m2/repository/ui/webapp/fn/auth.fn.post-confirmation/1.0.0-SNAPSHOT/auth.fn.post-confirmation-1.0.0-SNAPSHOT.jar"
-  handler: "ui.webapp.Handler"
+  asset: "fn-rust/target/lambda/post-confirmation/bootstrap.zip"
+  handler: bootstrap
   subnetType: private_with_egress
   timeout: 60
-  memorySize: 512
-  runtime: java21
+  memorySize: 256
+  runtime: provided.al2023
+  architecture: ARM_64
   environment:
     DYNAMODB_USER_TABLE: "{{deployment:id}}-webapp-db-user"
   role:

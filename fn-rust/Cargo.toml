@@ -1,0 +1,59 @@
+[workspace]
+resolver = "2"
+members = [
+    "lambdas/user",
+    "lambdas/message",
+    "lambdas/post-confirmation",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+
+[workspace.dependencies]
+# Lambda runtime
+lambda_runtime = "0.13"
+lambda_http = "0.13"
+aws_lambda_events = "0.15"
+
+# Shared libraries
+lambda-common = { path = "../../rust-common/crates/lambda-common" }
+lambda-observability = { path = "../../rust-common/crates/lambda-observability" }
+lambda-aws-clients = { path = "../../rust-common/crates/lambda-aws-clients" }
+
+# AWS SDK - Core
+aws-config = "1.5"
+aws-types = "1.3"
+aws-smithy-runtime-api = { version = "1.7", features = ["client"] }
+
+# AWS SDK - Services
+aws-sdk-dynamodb = "1.55"
+aws-sdk-cognitoidentityprovider = "1.55"
+
+# Async runtime
+tokio = { version = "1.43", features = ["full"] }
+
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# Error handling
+anyhow = "1.0"
+thiserror = "2.0"
+
+# Logging
+tracing = "0.1"
+
+# HTTP
+http = "1.0"
+
+[profile.release]
+opt-level = "z"        # Optimize for size
+lto = true             # Link-time optimization
+codegen-units = 1      # Better optimization
+strip = true           # Strip symbols
+panic = "abort"        # Smaller binary
+
+[profile.dev]
+opt-level = 0          # Fast compilation
+debug = true           # Debug symbols

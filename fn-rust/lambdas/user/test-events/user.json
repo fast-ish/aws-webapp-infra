@@ -1,0 +1,32 @@
+{
+  "version": "2.0",
+  "routeKey": "GET /user/{user}",
+  "rawPath": "/user/test-user-123",
+  "rawQueryString": "",
+  "headers": {
+    "accept": "application/json",
+    "content-type": "application/json"
+  },
+  "requestContext": {
+    "accountId": "123456789012",
+    "apiId": "api-id",
+    "domainName": "test.execute-api.us-east-1.amazonaws.com",
+    "domainPrefix": "test",
+    "http": {
+      "method": "GET",
+      "path": "/user/test-user-123",
+      "protocol": "HTTP/1.1",
+      "sourceIp": "192.0.2.1",
+      "userAgent": "Mozilla/5.0"
+    },
+    "requestId": "test-request-id",
+    "routeKey": "GET /user/{user}",
+    "stage": "$default",
+    "time": "01/Jan/2024:00:00:00 +0000",
+    "timeEpoch": 1704067200000
+  },
+  "pathParameters": {
+    "user": "test-user-123"
+  },
+  "isBase64Encoded": false
+}

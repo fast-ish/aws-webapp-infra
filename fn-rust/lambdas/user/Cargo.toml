@@ -1,0 +1,40 @@
+[package]
+name = "user"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+# Lambda runtime
+lambda_runtime = { workspace = true }
+lambda_http = { workspace = true }
+
+# Shared libraries
+lambda-common = { workspace = true }
+lambda-observability = { workspace = true }
+lambda-aws-clients = { workspace = true, features = ["dynamodb", "cognito-identity-provider"] }
+
+# AWS SDK
+aws-config = { workspace = true }
+aws-sdk-dynamodb = { workspace = true }
+aws-sdk-cognitoidentityprovider = { workspace = true }
+aws-smithy-runtime-api = { workspace = true }
+
+# Async runtime
+tokio = { workspace = true }
+
+# Serialization
+serde = { workspace = true }
+serde_json = { workspace = true }
+
+# Error handling
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+
+# Logging
+tracing = { workspace = true }
+
+# HTTP
+http = { workspace = true }
+
+# Date/time
+chrono = "0.4"
