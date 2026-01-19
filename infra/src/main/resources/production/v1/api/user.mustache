@@ -1,11 +1,12 @@
 fn:
   name: {{deployment:id}}-webapp-user-api
-  asset: "/root/.m2/repository/ui/webapp/fn/api.fn.user/1.0.0-SNAPSHOT/api.fn.user-1.0.0-SNAPSHOT.jar"
-  handler: ui.webapp.Handler
+  asset: "fn-rust/target/lambda/user/bootstrap.zip"
+  handler: bootstrap
   subnetType: private_with_egress
   timeout: 60
-  memorySize: 512
-  runtime: java21
+  memorySize: 256
+  runtime: provided.al2023
+  architecture: ARM_64
   environment:
     DYNAMODB_USER_TABLE: {{deployment:id}}-webapp-db-user
     USER_POOL_NAME: "{{deployment:id}}-webapp-userpool"
