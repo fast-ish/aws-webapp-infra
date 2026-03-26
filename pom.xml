@@ -80,6 +80,8 @@
                         <source>${maven.compiler.source}</source>
                         <target>${maven.compiler.target}</target>
                         <release>${maven.compiler.target}</release>
+                    <!-- Speed optimization: Enable incremental compilation -->
+                    <useIncrementalCompilation>true</useIncrementalCompilation>
                         <annotationProcessorPaths>
                             <path>
                                 <groupId>org.projectlombok</groupId>
